@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+	<script src="jquery/jquery.js"></script>
+	<script src="node_modules/asciirocks/scripts/ansi.js" type="text/javascript"></script>
+    <script src="node_modules/asciirocks/scripts/shape.js" type="text/javascript"></script>
+    <script src="node_modules/asciirocks/scripts/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="node_modules/asciirocks/scripts/jquery.simple-color.js" type="text/javascript"></script>
+    <script src="node_modules/asciirocks/scripts/jquery-ui-1.10.4.custom.min.js"></script>
+    <script src="node_modules/asciirocks/scripts/jquery.bpopup.js"></script>
+    <script src="node_modules/asciirocks/scripts/app.js"></script>
+	<script src="node_modules/asciirocks/scripts/requestanimframe.js"></script>
+    <script src="node_modules/asciirocks/fileuploader/fileuploader.js"></script>
+	<script src="node_modules/asciirocks/scripts/interpreter.js"></script>
+	<script src="scripts/x256.js"></script>
+    <link rel="stylesheet" href="node_modules/asciirocks/css/panel.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="node_modules/asciirocks/css/style.css" type="text/css" media="screen" />
+	<style>
+	 #ascii_content {
+		font-family:Courier, Mono, Monaco;
+		font-size:10px;
+		letter-spacing:0px;
+	 }
+
+	 #ascii_content div {
+	 display:inline-block;
+	 }
+	 </style>
+<script>
+ function updateAsciiArea() {
+	 $('#ascii_area').html($('#ascii_input').val());
+ }
+ window.onload = function() {
+  codepage = new Codepage("node_modules/asciirocks/images/CO_437_8x16.png", function() {
+            
+            setCanvasSize(document.getElementById("ansi"));
+            setANSICanvasSize();
+              
+            globalContext = document.getElementById("ansi").getContext("2d");
+           
+            charactersatonce = 999999; //Math.floor((baud || 115200) / 8 / 100);
+            doClearScreen(false);
+  });
+ };
+
+function clearScreen() {
+	   ctx = document.getElementById("ansi").getContext("2d");
+       ctx.fillStyle = 0;
+       ctx.fillRect(0, 0, document.getElementById('ansi').width, document.getElementById('ansi').height);
+}
+ 
+ function switchbutton() {
+     if ($('#switchbutton').val()=='Show Ascii') {
+		  clearScreen();
+          $('#switchbutton').val('Show HTML');
+          $('#ansi').show();        
+          $('#ascii_html').hide();
+          calculateContent();
+     } else {
+         $('#switchbutton').val('Show Ascii');
+         $('#ansi').hide();
+         $('#ascii_html').show();
+     }
+ }
+ 
+ function switchhtmlbutton() {
+     if ($('#switchhtmlbutton').val()=='Show Ascii HTML') {
+        $('#switchhtmlbutton').val('Hide Ascii HTML');
+        $('#ascii_textarea').hide();
+        $('#ascii_html').hide();
+        $('#ascii_content').css('opacity', 1);
+        $('#ascii_content').html($('#ascii_textarea').val());
+     } else {
+         $('#switchhtmlbutton').val('Show Ascii HTML');
+         $('#ascii_textarea').show();
+         $('#ascii_html').show();
+         $('#ascii_content').css('opacity', 0);
+     }
+ }
+ 
+function calculateContent() {
+
+    $('#ascii_content').html("<div>"+$('#ascii_textarea').val()+"</div>");
+    
+    $('#ascii_content').find("*").each(function() {
+		
+		var positionx = 0;
+		var positiony = 0;
+
+		calculateText($(this));
+		var parents = $(this).parent();
+		while (parents[0])
+		{
+			parents.each(function() {
+				calculateText($(this));
+			});
+
+			parents=parents.parent();
+			
+		}
+	});
+}
+
+function calculateText(that) {
+
+
+var positionx = 0;
+var positiony = 0;
+				if (typeof(that.prop('tagName'))!="undefined") && that.prop('tagName') {
+
+				var left = that.css('left').replace("px", "");
+				var top = that.css('top').replace("px", "");
+				var right = that.css('right').replace("px", "");
+				var bottom = that.css('bottom').replace("px", "");
+
+				if (left!="auto")
+				{
+					if (that.css('position')!="absolute")
+					{
+					
+					positionx = positionx + left;
+					
+					} else {
+						positionx = left;
+						
+					}
+				}
+				
+				if (top!="auto")
+				{
+					if (that.css('position')!="absolute")
+					{
+					positiony = positiony + top;
+					
+					} else {
+						positiony = left;
+						
+					}
+				}
+				if (right!="auto")
+				{
+					if (that.css('position')!="absolute")
+					{
+					positionx = positionx - right;
+					} else {
+						positionx = right;
+					}
+				}
+				if (bottom!="auto")
+				{
+					if (that.css('position')!="absolute")
+					{
+						positiony = positiony + bottom;
+					} else {
+						positionx = bottom;
+					}					
+				}
+				
+		
+        var text = that.clone().children().remove().end().text();
+		
+		var color = that.css('color');
+		
+		var rgb_color = color.substring(4, color.length-1).replace(/ /g, '').split(',');
+		
+			
+		var backgroundcolor = that.css('background-color');
+		var rgb_backgroundcolor = backgroundcolor.substring(4, backgroundcolor.length-1).replace(/ /g, '').split(',');
+	
+		for (var i = 0; i < text.length; i++) {
+				var asciiCode = text.charCodeAt(i);
+				if (asciiCode>=32) 
+				{			
+				var fgColor = x256(rgb_color[0], rgb_color[1], rgb_color[2])-1;
+				var bgColor = x256(rgb_backgroundcolor[0], rgb_backgroundcolor[1], rgb_backgroundcolor[2]);
+				codepage.drawChar(ctx, asciiCode, fgColor, bgColor, positionx+i, positiony);
+				}
+		}
+
+		}
+}
+
+function testAsciiTable() {
+	 $('#switchbutton').val('Show HTML');
+     $('#ansi').show();          
+     $('#ascii_html').hide();
+	 drawAsciiTable();
+}
+function drawAsciiTable() {
+			for (var i = 0; i < 255; i++ )
+			{
+					y=0;
+					var x = i;
+					while (x>80)
+					{
+						y++;
+						x=x-81;
+					}
+
+					console.log("x:"+x+"y:"+y);
+					
+					codepage.drawChar(ctx, i, 0, 1, x, y);
+			}
+}
+</script>
+<body style="width:100%;height:100%;">
+<div id="ascii_content" style="opacity:0" ></div> <!-- must be at the top position for coordinate getters to work -->
+<span id="ascii_html">
+The HTML:<textarea id="ascii_textarea" style="width:1024px;height:640;" rows="20" onkeyup="updateAsciiArea();">
+
+
+</textarea>
+</span>
+
+<canvas id="ansi" width=640 height=480 style="display:none" onclick="switchbutton();"></canvas>
+<input type="button" value="Show Ascii" id="switchbutton" onclick="switchbutton();"/>
+<input type="button" value="Show Ascii HTML" id="switchhtmlbutton" onclick="switchhtmlbutton();"/>
+<input type="button" value="Test ascii table" id="testasciitable" onclick="testAsciiTable();" />

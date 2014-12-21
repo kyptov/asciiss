@@ -1,0 +1,8 @@
+{
+    "name": "form"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+    "asciirocks": "git+ssh://git@github.com/asciibox/asciirocks.git"
+  }
+}
