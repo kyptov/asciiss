@@ -61,20 +61,6 @@ function clearScreen() {
      }
  }
  
- function switchhtmlbutton() {
-     if ($('#switchhtmlbutton').val()=='Show Ascii HTML') {
-        $('#switchhtmlbutton').val('Hide Ascii HTML');
-        $('#ascii_textarea').hide();
-        $('#ascii_html').hide();
-        $('#ascii_content').css('opacity', 1);
-        $('#ascii_content').html($('#ascii_textarea').val());
-     } else {
-         $('#switchhtmlbutton').val('Show Ascii HTML');
-         $('#ascii_textarea').show();
-         $('#ascii_html').show();
-         $('#ascii_content').css('opacity', 0);
-     }
- }
  
 function calculateContent() {
 
@@ -106,12 +92,12 @@ var positionx = 0;
 var positiony = 0;
 				if ( (typeof(that.prop('tagName'))!="undefined") && (that.prop('tagName')!="BODY") && (that.prop('tagName')!="HTML") ) {
 
-				var left = that.css('left').replace("px", "");
-				var top = that.css('top').replace("px", "");
-				var right = that.css('right').replace("px", "");
-				var bottom = that.css('bottom').replace("px", "");
+				var left = parseInt(that.css('left').replace("px", ""));
+				var top = parseInt(that.css('top').replace("px", ""));
+				var right = parseInt(that.css('right').replace("px", ""));
+				var bottom = parseInt(that.css('bottom').replace("px", ""));
 
-				if (left!="auto")
+				if ( (left!="auto") && (isNaN(left)==false) )
 				{
 					if (that.css('position')!="absolute")
 					{
@@ -124,18 +110,20 @@ var positiony = 0;
 					}
 				}
 				
-				if (top!="auto")
+				if ( (top!="auto") && (isNaN(top)==false) ) 
 				{
 					if (that.css('position')!="absolute")
 					{
+					alert("posy = "+positiony+"+"+top+" = "+(positiony+top));
 					positiony = positiony + top;
-					
+					alert("!!!POSITIONY="+positiony);
 					} else {
-						positiony = left;
+					alert("positiony changed1");
+						positiony = top;
 						
 					}
 				}
-				if (right!="auto")
+				if ( (right!="auto") && (isNaN(right)==false) ) 
 				{
 					if (that.css('position')!="absolute")
 					{
@@ -144,17 +132,19 @@ var positiony = 0;
 						positionx = right;
 					}
 				}
-				if (bottom!="auto")
+				if ( (bottom!="auto")  && (isNaN(bottom)==false) ) 
 				{
+				alert("BOTTOM:"+bottom);
 					if (that.css('position')!="absolute")
 					{
-						positiony = positiony + bottom;
+						positiony = getDisplayHeight() - bottom;
 					} else {
-						positionx = bottom;
-					}					
+						positiony = bottom;
+					}				
+					alert("PositionY changed2");	
 				}
 				
-		
+		alert("RESULT POSITIONY:"+positiony);
         var text = that.clone().children().remove().end().text();
 		
 		var color = that.css('color');
@@ -171,6 +161,7 @@ var positiony = 0;
 				{			
 				var fgColor = x256(rgb_color[0], rgb_color[1], rgb_color[2])-1;
 				var bgColor = x256(rgb_backgroundcolor[0], rgb_backgroundcolor[1], rgb_backgroundcolor[2]);
+				alert("fgColor:"+fgColor+" asciiCode:"+asciiCode+" pox:"+positionx+" posy: "+positiony);
 				codepage.drawChar(ctx, asciiCode, fgColor, bgColor, positionx+i, positiony);
 				}
 		}
@@ -212,5 +203,4 @@ The HTML:<textarea id="ascii_textarea" style="width:1024px;height:640;" rows="20
 
 <canvas id="ansi" width=640 height=480 style="display:none" onclick="switchbutton();"></canvas>
 <input type="button" value="Show Ascii" id="switchbutton" onclick="switchbutton();"/>
-<input type="button" value="Show Ascii HTML" id="switchhtmlbutton" onclick="switchhtmlbutton();"/>
 <input type="button" value="Test ascii table" id="testasciitable" onclick="testAsciiTable();" />
