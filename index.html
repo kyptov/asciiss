@@ -27,8 +27,10 @@
 <script>
  function updateAsciiArea() {
 	 $('#ascii_area').html($('#ascii_input').val());
+	 localStorage.setItem("html", $('#ascii_input').val());
  }
  window.onload = function() {
+  $('#ascii_input').val(localStorage.getItem("html"));
   codepage = new Codepage("node_modules/asciirocks/images/CO_437_8x16.png", function() {
             
             setCanvasSize(document.getElementById("ansi"));
@@ -60,100 +62,112 @@ function clearScreen() {
          $('#ascii_html').show();
      }
  }
- 
- 
+
+function parseCSS(that) {
+     this.styles = {};
+   if (typeof(that.attr('style'))!="undefined") {
+        this.items = {};
+        this.stylestemp = that.attr('style').split(';');
+       
+        var c = '';
+        for (var x = 0, l = this.stylestemp.length; x < l; x++) {
+          c = this.stylestemp[x].split(':');
+          this.styles[$.trim(c[0])] = $.trim(c[1]);
+        }
+   }
+   
+}
+
+parseCSS.prototype.get = function(what) {    
+       if (typeof(this.styles[what])!="undefined") {
+           return this.styles[what];
+       } else {
+           return "";
+       }    
+}
+
+    
 function calculateContent() {
 
-    $('#ascii_content').html("<div>"+$('#ascii_textarea').val()+"</div>");
+$('#ascii_content').html("<div>"+$('#ascii_textarea').val()+"</div>");
     
     $('#ascii_content').find("*").each(function() {
 		
-		var positionx = 0;
-		var positiony = 0;
-
-		calculateText($(this));
+                
+                var cssItems = new parseCSS($(this));
+                var positionx = parseInt(cssItems.get('left').replace("px", ""));
+                var positiony = parseInt(cssItems.get('top').replace("px", ""));
+                if (isNaN(positionx)) positionx=0;
+                if (isNaN(positiony)) positiony=0;
+                
+                var originalDIV = $(this);
 		var parents = $(this).parent();
-		while (parents[0])
+                var absoluteFound = false;
+                
+		while ( (parents[0]) && (absoluteFound==false) )
 		{
 			parents.each(function() {
-				calculateText($(this));
-			});
+                                var that = $(this);
+				if ( (typeof(that.prop('tagName'))!="undefined") && (that.prop('tagName')!="BODY") && (that.prop('tagName')!="HTML") ) {
+
+                                var cssItems = new parseCSS($(this));
+				var left = parseInt(cssItems.get('left').replace("px", ""));
+				var top = parseInt(cssItems.get('top').replace("px", ""));
+				
+				if ( (left!="auto") && (isNaN(left)==false) )
+				{
+                                       
+					positionx = positionx + left;
+				}				
+				if ( (top!="auto") && (isNaN(top)==false) ) 
+				{
+                                   
+					positiony = positiony + top;
+				}
+                                
+				if (cssItems.get('position')=="absolute")
+				{
+                                  //  alert("positionfound final: "+positionx+"/"+positiony);
+                                            absoluteFound=true;
+				}
+
+		}
+                			});
 
 			parents=parents.parent();
 			
 		}
+                
+              
+                printthat(originalDIV, positionx, positiony);
 	});
+
 }
 
-function calculateText(that) {
-
-
-var positionx = 0;
-var positiony = 0;
-				if ( (typeof(that.prop('tagName'))!="undefined") && (that.prop('tagName')!="BODY") && (that.prop('tagName')!="HTML") ) {
-
-				var left = parseInt(that.css('left').replace("px", ""));
-				var top = parseInt(that.css('top').replace("px", ""));
-				var right = parseInt(that.css('right').replace("px", ""));
-				var bottom = parseInt(that.css('bottom').replace("px", ""));
-
-				if ( (left!="auto") && (isNaN(left)==false) )
-				{
-					if (that.css('position')!="absolute")
-					{
-					
-					positionx = positionx + left;
-					
-					} else {
-						positionx = left;
-						
-					}
-				}
-				
-				if ( (top!="auto") && (isNaN(top)==false) ) 
-				{
-					if (that.css('position')!="absolute")
-					{
-					alert("posy = "+positiony+"+"+top+" = "+(positiony+top));
-					positiony = positiony + top;
-					alert("!!!POSITIONY="+positiony);
-					} else {
-					alert("positiony changed1");
-						positiony = top;
-						
-					}
-				}
-				if ( (right!="auto") && (isNaN(right)==false) ) 
-				{
-					if (that.css('position')!="absolute")
-					{
-					positionx = positionx - right;
-					} else {
-						positionx = right;
-					}
-				}
-				if ( (bottom!="auto")  && (isNaN(bottom)==false) ) 
-				{
-				alert("BOTTOM:"+bottom);
-					if (that.css('position')!="absolute")
-					{
-						positiony = getDisplayHeight() - bottom;
-					} else {
-						positiony = bottom;
-					}				
-					alert("PositionY changed2");	
-				}
-				
-		alert("RESULT POSITIONY:"+positiony);
-        var text = that.clone().children().remove().end().text();
-		
-		var color = that.css('color');
-		
+function printthat(that,positionx,positiony) {
+    
+                var text = that.clone().children().remove().end().text();		
+                var cssItems = new parseCSS($(this));
+                
+		var color = cssItems.get('color');		
+                if (color=="") {
+                    rgb_color={};
+                    rgb_color[0]=255;
+                    rgb_color[1]=255;
+                    rgb_color[2]=255;                    
+                } else {
 		var rgb_color = color.substring(4, color.length-1).replace(/ /g, '').split(',');
-		
-			
-		var backgroundcolor = that.css('background-color');
-		var rgb_backgroundcolor = backgroundcolor.substring(4, backgroundcolor.length-1).replace(/ /g, '').split(',');
+                }
+					
+		var backgroundcolor = cssItems.get('background-color');
+                if (backgroundcolor=="") {
+                    rgb_backgroundcolor={};
+                    rgb_backgroundcolor[0]=0;
+                    rgb_backgroundcolor[1]=0;
+                    rgb_backgroundcolor[2]=0;                    
+                } else {
+                    var rgb_backgroundcolor = backgroundcolor.substring(4, backgroundcolor.length-1).replace(/ /g, '').split(',');
+                }
 	
 		for (var i = 0; i < text.length; i++) {
 				var asciiCode = text.charCodeAt(i);
@@ -161,18 +175,18 @@ var positiony = 0;
 				{			
 				var fgColor = x256(rgb_color[0], rgb_color[1], rgb_color[2])-1;
 				var bgColor = x256(rgb_backgroundcolor[0], rgb_backgroundcolor[1], rgb_backgroundcolor[2]);
-				alert("fgColor:"+fgColor+" asciiCode:"+asciiCode+" pox:"+positionx+" posy: "+positiony);
+				
 				codepage.drawChar(ctx, asciiCode, fgColor, bgColor, positionx+i, positiony);
 				}
 		}
-
-		}
+    
+    
 }
 
 function testAsciiTable() {
 	 $('#switchbutton').val('Show HTML');
-     $('#ansi').show();          
-     $('#ascii_html').hide();
+         $('#ansi').show();          
+         $('#ascii_html').hide();
 	 drawAsciiTable();
 }
 function drawAsciiTable() {
