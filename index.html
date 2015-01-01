@@ -1,222 +1,302 @@
 <!DOCTYPE html>
-	<script src="jquery/jquery.js"></script>
-	<script src="node_modules/asciirocks/scripts/ansi.js" type="text/javascript"></script>
-    <script src="node_modules/asciirocks/scripts/shape.js" type="text/javascript"></script>
-    <script src="node_modules/asciirocks/scripts/jquery-1.9.1.min.js" type="text/javascript"></script>
-    <script src="node_modules/asciirocks/scripts/jquery.simple-color.js" type="text/javascript"></script>
-    <script src="node_modules/asciirocks/scripts/jquery-ui-1.10.4.custom.min.js"></script>
-    <script src="node_modules/asciirocks/scripts/jquery.bpopup.js"></script>
-    <script src="node_modules/asciirocks/scripts/app.js"></script>
-	<script src="node_modules/asciirocks/scripts/requestanimframe.js"></script>
-    <script src="node_modules/asciirocks/fileuploader/fileuploader.js"></script>
-	<script src="node_modules/asciirocks/scripts/interpreter.js"></script>
-	<script src="scripts/x256.js"></script>
-    <link rel="stylesheet" href="node_modules/asciirocks/css/panel.css" type="text/css" media="screen" />
-    <link rel="stylesheet" href="node_modules/asciirocks/css/style.css" type="text/css" media="screen" />
-	<style>
-	 #ascii_content {
-		font-family:Courier, Mono, Monaco;
-		font-size:10px;
-		letter-spacing:0px;
-	 }
+<script src="jquery/jquery.js"></script>
+<script src="node_modules/asciirocks/scripts/ansi.js" type="text/javascript"></script>
+<script src="node_modules/asciirocks/scripts/jquery-1.9.1.min.js" type="text/javascript"></script>
+<script src="node_modules/asciirocks/scripts/jquery-ui-1.10.4.custom.min.js"></script>
+<script src="node_modules/asciirocks/scripts/app.js"></script>
+<script src="node_modules/asciirocks/scripts/interpreter.js"></script>
+<script src="scripts/x256.js"></script>
+<link rel="stylesheet" href="node_modules/asciirocks/css/panel.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="node_modules/asciirocks/css/style.css" type="text/css" media="screen" />
+<style>
+    #ascii_content {
+        font-family:Courier, Mono, Monaco;
+        font-size:10px;
+        letter-spacing:0px;
+    }
 
-	 #ascii_content div {
-	 display:inline-block;
-	 }
-	 </style>
+    #ascii_content div {
+        display:inline-block;
+    }
+</style>
 <script>
- function updateAsciiArea() {
-	 $('#ascii_area').html($('#ascii_input').val());
-         
-	 localStorage.setItem("html", $('#ascii_textarea').val());
- }
- window.onload = function() {
-     
-  $('#ascii_textarea').val(localStorage.getItem("html"));
-  codepage = new Codepage("node_modules/asciirocks/images/CO_437_8x16.png", function() {
-            
+    var inputs = new Array();
+
+    function updateAsciiArea() {
+        $('#ascii_area').html($('#ascii_input').val());
+
+        localStorage.setItem("html", $('#ascii_textarea').val());
+    }
+
+    window.onload = function() {
+
+        $('#ascii_textarea').val(localStorage.getItem("html"));
+
+        width = 160;
+        height = 80;
+        resizeToScreen = true;
+
+        codepage = new Codepage("node_modules/asciirocks/images/CO_437_8x16.png", function() {
+
             setCanvasSize(document.getElementById("ansi"));
             setANSICanvasSize();
-              
+
             globalContext = document.getElementById("ansi").getContext("2d");
-           
+
             charactersatonce = 999999; //Math.floor((baud || 115200) / 8 / 100);
             doClearScreen(false);
-  });
- };
+        });
+    };
 
-function clearScreen() {
-	   ctx = document.getElementById("ansi").getContext("2d");
-       ctx.fillStyle = 0;
-       ctx.fillRect(0, 0, document.getElementById('ansi').width, document.getElementById('ansi').height);
-}
- 
- function switchbutton() {
-     if ($('#switchbutton').val()=='Show Ascii') {
-		  clearScreen();
-          $('#switchbutton').val('Show HTML');
-          $('#ansi').show();        
-          $('#ascii_html').hide();
-          calculateContent();
-     } else {
-         $('#switchbutton').val('Show Ascii');
-         $('#ansi').hide();
-         $('#ascii_html').show();
-     }
- }
+    function clearScreen() {
+        ctx = document.getElementById("ansi").getContext("2d");
+        ctx.fillStyle = 0;
+        ctx.fillRect(0, 0, document.getElementById('ansi').width, document.getElementById('ansi').height);
+    }
 
-function parseCSS(that) {
-     this.styles = {};
-   if (typeof(that.attr('style'))!="undefined") {
-        this.items = {};
-        this.stylestemp = that.attr('style').split(';');
-       
-        var c = '';
-        for (var x = 0, l = this.stylestemp.length; x < l; x++) {
-          c = this.stylestemp[x].split(':');
-          this.styles[$.trim(c[0])] = $.trim(c[1]);
+    function switchbutton() {
+        if ($('#switchbutton').val() == 'Show Ascii') {
+            clearScreen();
+            $('#switchbutton').val('Show HTML');
+            $('#ansi').show();
+            $('#ascii_html').hide();
+            calculateContent();
+        } else {
+            $('#switchbutton').val('Show Ascii');
+            $('#ansi').hide();
+            $('#ascii_html').show();
         }
-   }
-   
-}
+    }
 
-parseCSS.prototype.get = function(what) {    
-       if (typeof(this.styles[what])!="undefined") {
-           return this.styles[what];
-       } else {
-           return "";
-       }    
-}
+    function parseCSS(that) {
+        this.styles = {};
+        if (typeof (that.attr('style')) != "undefined") {
+            this.items = {};
+            this.stylestemp = that.attr('style').split(';');
 
-    
-function calculateContent() {
+            var c = '';
+            for (var x = 0, l = this.stylestemp.length; x < l; x++) {
+                c = this.stylestemp[x].split(':');
+                var key = $.trim(c[0]);
 
-$('#ascii_content').html("<div>"+$('#ascii_textarea').val()+"</div>");
-    
-    $('#ascii_content').find("*").each(function() {
-		
-                
+                this.styles[key] = $.trim(c[1]);
+            }
+        }
+
+    }
+
+    parseCSS.prototype.get = function(what) {
+        if (typeof (this.styles[what]) != "undefined") {
+            return this.styles[what];
+        } else {
+            return "";
+        }
+    }
+
+    parseCSS.prototype.getColor = function() {
+
+        var color = this.get('color');
+
+        if (color == "") {
+
+            rgb_color = {};
+            rgb_color[0] = 255;
+            rgb_color[1] = 255;
+            rgb_color[2] = 255;
+        } else {
+
+            var rgb_color = color.substring(4, color.length - 1).replace(/ /g, '').split(',');
+        }
+        return rgb_color;
+    }
+
+
+    parseCSS.prototype.getBackgroundColor = function()
+    {
+        var backgroundcolor = this.get('background-color');
+
+        if (backgroundcolor == "") {
+
+            rgb_backgroundcolor = {};
+            rgb_backgroundcolor[0] = 0;
+            rgb_backgroundcolor[1] = 0;
+            rgb_backgroundcolor[2] = 0;
+        } else {
+
+            var rgb_backgroundcolor = backgroundcolor.substring(4, backgroundcolor.length - 1).replace(/ /g, '').split(',');
+        }
+        return rgb_backgroundcolor;
+    }
+
+    function renderInput(that, positionx, positiony) {
+
+        var inputInfo = { "positionx" : positionx, "positiony" : positiony, "length" : length, "value" : value, "cursorposx" : 1 };
+        inputs[inputs.length] = inputInfo;
+        
+        positionx = positionx + that.parent().text().length;
+        var name = that.attr('name');
+        var length = that.attr('length');
+        var type = that.attr('type');
+        var value = that.attr('value');
+
+        if (typeof (value) == "undefined")
+            value = "";
+        if (type == "text") {
+            for (var i = 0; i < length; i++) {
+                var asciiCode = 32;
+                if (i < value.length)
+                {
+                    asciiCode = value.charCodeAt(i);
+                }
+                codepage.drawChar(ctx, asciiCode, 11, 19, positionx + i, positiony);
+            }
+        }
+    }
+
+
+    function calculateContent() {
+
+        $('#ascii_content').html("<div>" + $('#ascii_textarea').val() + "</div>");
+
+        for (var i = 0; i <= 1; i++) {
+
+            var findwhat_tag = "input";
+            if (i == 1) {
+                findwhat_tag = "*";
+            }
+
+            $('#ascii_content').find(findwhat_tag).each(function() {
+
                 var cssItems = new parseCSS($(this));
                 var positionx = parseInt(cssItems.get('left').replace("px", ""));
                 var positiony = parseInt(cssItems.get('top').replace("px", ""));
-                if (isNaN(positionx)) positionx=0;
-                if (isNaN(positiony)) positiony=0;
-                
+                if (isNaN(positionx))
+                    positionx = 0;
+                if (isNaN(positiony))
+                    positiony = 0;
+
                 var originalDIV = $(this);
-		var parents = $(this).parent();
+                var parents = $(this).parent();
                 var absoluteFound = false;
-                
-		while ( (parents[0]) && (absoluteFound==false) )
-		{
-			parents.each(function() {
-                                var that = $(this);
-				if ( (typeof(that.prop('tagName'))!="undefined") && (that.prop('tagName')!="BODY") && (that.prop('tagName')!="HTML") ) {
-
-                                var cssItems = new parseCSS($(this));
-				var left = parseInt(cssItems.get('left').replace("px", ""));
-				var top = parseInt(cssItems.get('top').replace("px", ""));
-				
-				if ( (left!="auto") && (isNaN(left)==false) )
-				{
-                                       
-					positionx = positionx + left;
-				}				
-				if ( (top!="auto") && (isNaN(top)==false) ) 
-				{
-                                   
-					positiony = positiony + top;
-				}
-                                
-				if (cssItems.get('position')=="absolute")
-				{
-                                  //  alert("positionfound final: "+positionx+"/"+positiony);
-                                            absoluteFound=true;
-				}
-
-		}
-                			});
-
-			parents=parents.parent();
-			
-		}
-                
-              
-                printthat(originalDIV, positionx, positiony);
-	});
-
-}
-
-function printthat(that,positionx,positiony) {
-    
-                var text = that.clone().children().remove().end().text();		
-                var cssItems = new parseCSS($(this));
-                
-		var color = cssItems.get('color');		
-                if (color=="") {
-                    rgb_color={};
-                    rgb_color[0]=255;
-                    rgb_color[1]=255;
-                    rgb_color[2]=255;                    
-                } else {
-		var rgb_color = color.substring(4, color.length-1).replace(/ /g, '').split(',');
+                var hasChildren = false;
+                if (cssItems.get('position') == "absolute") {
+                    absoluteFound = true;
                 }
-					
-		var backgroundcolor = cssItems.get('background-color');
-                if (backgroundcolor=="") {
-                    rgb_backgroundcolor={};
-                    rgb_backgroundcolor[0]=0;
-                    rgb_backgroundcolor[1]=0;
-                    rgb_backgroundcolor[2]=0;                    
-                } else {
-                    var rgb_backgroundcolor = backgroundcolor.substring(4, backgroundcolor.length-1).replace(/ /g, '').split(',');
+
+                while ((parents[0]) && (absoluteFound == false))
+                {
+                    hasChildren = true;
+                    parents.each(function() {
+                        var that = $(this);
+                        if ((typeof (that.prop('tagName')) != "undefined") && (that.prop('tagName') != "BODY") && (that.prop('tagName') != "HTML")) {
+
+                            var cssItems = new parseCSS($(this));
+                            var left = parseInt(cssItems.get('left').replace("px", ""));
+                            var top = parseInt(cssItems.get('top').replace("px", ""));
+
+                            if ((left != "auto") && (isNaN(left) == false))
+                            {
+                                positionx = positionx + left;
+                            }
+                            if ((top != "auto") && (isNaN(top) == false))
+                            {
+
+                                positiony = positiony + top;
+                            }
+
+                            if (cssItems.get('position') == "absolute")
+                            {
+                                absoluteFound = true;
+                            }
+
+
+
+                        }
+
+
+                    });
+
+                    parents = parents.parent();
+
                 }
-	
-		for (var i = 0; i < text.length; i++) {
-				var asciiCode = text.charCodeAt(i);
-				if (asciiCode>=32) 
-				{			
-				var fgColor = x256(rgb_color[0], rgb_color[1], rgb_color[2])-1;
-				var bgColor = x256(rgb_backgroundcolor[0], rgb_backgroundcolor[1], rgb_backgroundcolor[2]);
-				
-				codepage.drawChar(ctx, asciiCode, fgColor, bgColor, positionx+i, positiony);
-				}
-		}
-    
-    
-}
 
-function testAsciiTable() {
-	 $('#switchbutton').val('Show HTML');
-         $('#ansi').show();          
-         $('#ascii_html').hide();
-	 drawAsciiTable();
-}
-function drawAsciiTable() {
-			for (var i = 0; i < 255; i++ )
-			{
-					y=0;
-					var x = i;
-					while (x>80)
-					{
-						y++;
-						x=x-81;
-					}
+                if ((originalDIV.prop('tagName')) == "INPUT") {
+                    renderInput(originalDIV, positionx, positiony);
+                    originalDIV.remove();
+                } else
+                if (hasChildren) {
 
-					console.log("x:"+x+"y:"+y);
-					
-					codepage.drawChar(ctx, i, 0, 1, x, y);
-			}
-}
+                    var text = originalDIV.clone().children().remove().end().text();
+                    printthat(text, originalDIV, positionx, positiony);
+                } else {
+
+                    var text = originalDIV.html();
+                    printthat(text, originalDIV, positionx, positiony);
+                }
+
+
+            });
+
+        }
+
+    }
+
+    function printthat(text, that, positionx, positiony) {
+
+
+
+        var cssItems = new parseCSS($(this));
+        var rgb_color = cssItems.getColor();
+
+        var rgb_backgroundcolor = cssItems.getBackgroundColor();
+
+
+        for (var i = 0; i < text.length; i++) {
+            var asciiCode = text.charCodeAt(i);
+            if (asciiCode >= 32)
+            {
+                var fgColor = x256(rgb_color[0], rgb_color[1], rgb_color[2]) - 1;
+                var bgColor = x256(rgb_backgroundcolor[0], rgb_backgroundcolor[1], rgb_backgroundcolor[2]);
+
+                codepage.drawChar(ctx, asciiCode, fgColor, bgColor, positionx + i, positiony);
+            }
+        }
+
+
+    }
+
+    function testAsciiTable() {
+        $('#switchbutton').val('Show HTML');
+        $('#ansi').show();
+        $('#ascii_html').hide();
+        drawAsciiTable();
+    }
+    function drawAsciiTable() {
+        for (var i = 0; i < 255; i++)
+        {
+            y = 0;
+            var x = i;
+            while (x > 80)
+            {
+                y++;
+                x = x - 81;
+            }
+
+            console.log("x:" + x + "y:" + y);
+
+            codepage.drawChar(ctx, i, 0, 1, x, y);
+        }
+    }
 </script>
 <body style="width:100%;height:100%;">
-<div id="ascii_content" style="opacity:0" ></div> <!-- must be at the top position for coordinate getters to work -->
-<span id="ascii_html">
-The HTML:<textarea id="ascii_textarea" style="width:1024px;height:640;" rows="20" onkeyup="updateAsciiArea();">
+    <div id="ascii_content" style="opacity:0" ></div> <!-- must be at the top position for coordinate getters to work -->
+    <span id="ascii_html">
+        The HTML:<textarea id="ascii_textarea" style="width:1024px;height:640;" rows="20" onkeyup="updateAsciiArea();">
 
 
-</textarea>
-</span>
+        </textarea>
+    </span>
 
-<canvas id="ansi" width=640 height=480 style="display:none" onclick="switchbutton();"></canvas>
-<input type="button" value="Show Ascii" id="switchbutton" onclick="switchbutton();"/>
-<input type="button" value="Test ascii table" id="testasciitable" onclick="testAsciiTable();" />
+    <canvas id="ansi" width=640 height=480 style="display:none"></canvas>
+    <input type="button" value="Show Ascii" id="switchbutton" onclick="switchbutton();"/>
+    <input type="button" value="Test ascii table" id="testasciitable" onclick="testAsciiTable();" />
