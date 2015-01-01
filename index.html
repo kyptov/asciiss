@@ -27,10 +27,12 @@
 <script>
  function updateAsciiArea() {
 	 $('#ascii_area').html($('#ascii_input').val());
-	 localStorage.setItem("html", $('#ascii_input').val());
+         
+	 localStorage.setItem("html", $('#ascii_textarea').val());
  }
  window.onload = function() {
-  $('#ascii_input').val(localStorage.getItem("html"));
+     
+  $('#ascii_textarea').val(localStorage.getItem("html"));
   codepage = new Codepage("node_modules/asciirocks/images/CO_437_8x16.png", function() {
             
             setCanvasSize(document.getElementById("ansi"));
