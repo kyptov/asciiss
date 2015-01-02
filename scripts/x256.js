@@ -271,8 +271,8 @@ function x256(r, g, b)
     var c = [ r, g, b ];
     var best = null;
     
-    for (var i = 0; i < ansicolors.length; i++) {
-        var d = distance(map(ansicolors[i]), c)
+    for (var i = 0; i < colors.length; i++) {
+        var d = distance(map(colors[i]), c)
         if (!best || d <= best.distance) {
             best = { distance : d, index : i };
         }
