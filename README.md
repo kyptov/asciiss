@@ -5,6 +5,8 @@ Show characters on the screen that look just like in the 80s
 
 A demo for this can get seen here:
 
+<a href="http://stylesheets.asciibox.com">http://stylesheets.asciibox.com</a>
+
 Installation with nodejs
 ========================
 
@@ -15,8 +17,7 @@ Installation without nodejs
 
 To install the application, copy all files from http://www.github.com/asciibox/asciirocks to the subdirectory "asciirocks" inside "node_modules":
 
-
-
+<img src="https://raw.githubusercontent.com/asciibox/asciiss/master/ascii_dot_rocks.png">
 
 The following directories should be in asciirocks: assets, css, fileuploader, images, music, scripts as well as the following .php files: create_default.php, export.php, subs.php, upload.php and the following .html file: index.html.
 
