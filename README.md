@@ -21,7 +21,7 @@ To install the application, copy all files from http://www.github.com/asciibox/a
 
 The following directories should be in asciirocks: assets, css, fileuploader, images, music, scripts as well as the following .php files: create_default.php, export.php, subs.php, upload.php and the following .html file: index.html.
 
-When you call the application, you will get asked for your username. You will be able to create own rooms and join them. You will also be able to chat privately with other users.
+When you call the application, you will get to see a HTML5 canvas with Ascii characters on the screen, which were positioned and formatted using stylesheet commands.
 
 
 
