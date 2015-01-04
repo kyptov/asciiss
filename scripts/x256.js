@@ -12,9 +12,11 @@ function x256(r, g, b)
     var best = null;
     
     for (var i = 0; i < ansicolors.length; i++) {
-        var d = distance(map(ansicolors[i]), c)
+        var mymap = map(ansicolors[i]);
+        if ( (mymap[0]==c[0]) && (mymap[1]==c[1]) && (mymap[2]==c[2]) ) return i; // Remove this to have the original sourcecode, which maybe does not work 100%
+        var d = distance(mymap, c)
         if (!best || d <= best.distance) {
-            best = { distance : d, index : i };
+            best = { distance : d, index : i-1 };
         }
     }
     

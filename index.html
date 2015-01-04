@@ -92,15 +92,17 @@
         var rgb_color = cssItems.getColor();
         var rgb_backgroundcolor = cssItems.getBackgroundColor();
 
+        //alert(rgb_color[0]+"/"+rgb_color[1]+"/"+rgb_color[2]);
 
 		// Then iterate over the given text.
         for (var i = 0; i < text.length; i++) {
             var asciiCode = text.charCodeAt(i);
             if (asciiCode >= 32)
             {
-                var fgColor = x256(rgb_color[0], rgb_color[1], rgb_color[2]) ;
+                var fgColor = x256(rgb_color[0], rgb_color[1], rgb_color[2]);
                 var bgColor = x256(rgb_backgroundcolor[0], rgb_backgroundcolor[1], rgb_backgroundcolor[2]);
 				// Draw on canvas
+                                
                 codepage.drawChar(ctx, asciiCode, fgColor, bgColor, positionx + i, positiony);
             }
         }
@@ -148,7 +150,9 @@
         The HTML:<textarea id="ascii_textarea" style="width:1024px;height:640;" rows="20" onkeyup="updateAsciiArea();">
 <span style="top:20px;left:20px;color:white;">This look and feel of this text was made by defining CSS style attributes. The HTML was parsed by javascript and the result is this.</span>
 <span style="top:22px;left:20px;color:#3caac8;">Click on the screen to see the HTML that belongs to this page.</span>
-<span style="top:25px;left:20px;color:white;">We can also create input fields (which are not editable at the moment): <input type="text" name="test" /></span>
+<form onsubmit="submit();">
+<span style="top:25px;left:20px;color:white;">We can also create input fields (which are not editable at the moment): <input type="text" name="test" /><input type="button" onclick="submit();"></span>
+</form>
 
         </textarea>
     </span>
