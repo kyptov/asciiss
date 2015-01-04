@@ -20,6 +20,8 @@
     }
 </style>
 <script>
+    var doubleClickStarted = false;
+    var doubleClickInterval;
    
 
     window.onload = function() {
@@ -56,8 +58,16 @@
 		// This gets called whenever the user clicks on the Canvas
           document.getElementById('ansi').addEventListener('mousedown', function(e) {
                    
-                   switchbutton();
-                    /*var ansicanvas = document.getElementById('ansi');
+                    if (doubleClickStarted)
+                    {
+                        doubleClickStarted=false;
+                        switchbutton();
+                        clearTimeout(doubleClickInterval);
+                    }
+                    doubleClickStarted = true;
+                    doubleClickInterval = setTimeout(function() { doubleClickStarted=false; }, 300);
+                   
+                    var ansicanvas = document.getElementById('ansi');
                     var mouse = getMousePos(ansicanvas, e);
                     var mx = mouse.x;
                     var my = mouse.y;                    
@@ -73,7 +83,7 @@
                     setCursorPosX(myCursorPosX);
                     setCursorPosY(myCursorPosY);
                     
-                    redrawCursor();*/
+                    redrawCursor();
                     
                 });
         
