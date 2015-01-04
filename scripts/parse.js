@@ -6,37 +6,40 @@ var currentInput = 0;
 /** This converts to keycodes to real characters. Language dependency included. Calls executeKey to show the keys in effect **/
 function handleParsedKeyCode(keyCode,e) {
                 
+                
+                var mychar = String.fromCharCode(e.which);
+                
                 switch(keyCode){
                   
                     case 249 :
-                               executeParsedKey(151); // high two becomes ( for french keyboard
+                               executeParsedKey(151, mychar); // high two becomes ( for french keyboard
                         return true;
                         break;
                             
-                    case 178: executeParsedKey(40); // high two becomes ( for french keyboard
+                    case 178: executeParsedKey(40, mychar); // high two becomes ( for french keyboard
                         return true;
                         break;
                             
-                       case 224: executeParsedKey(133); // a accent
+                       case 224: executeParsedKey(133, mychar); // a accent
                              
                 
                       return true;
-                        case 232: executeParsedKey(138); // e accent
+                        case 232: executeParsedKey(138, mychar); // e accent
                              
                 
                       return true;
                       break;
-                         case 231: executeKey(135); // ca
+                         case 231: executeKey(135, mychar); // ca
                              
                 
                       return true;
                       break;
-            case 233: executeParsedKey(130); // e accent
+            case 233: executeParsedKey(130, mychar); // e accent
                 
                       return true;
                       break;
             case 176 : 
-                            executeParsedKey(167);
+                            executeParsedKey(167, mychar);
                     return true;
                     break;
                 case 112 : 
@@ -44,11 +47,11 @@ function handleParsedKeyCode(keyCode,e) {
                             alert(cursorPosX+"/"+cursorPosY);
                             break;
                      } else {
-                          executeParsedKey(112);
+                          executeParsedKey(112, mychar);
                      }
                 break;
                      case 96 : // opening single quote - convert to standard single quote due to cursor right bug on single quote
-                            executeParsedKey(39);
+                            executeParsedKey(39, mychar);
                             return true;
                             break;
                         case 97 : // CTRL-A
@@ -56,7 +59,7 @@ function handleParsedKeyCode(keyCode,e) {
                                 var ascii = screenCharacterArray[cursorPosY][cursorPosX];
                                 alert("Color / Foreground color / Background color: "+ascii);
                             } else {
-                                executeParsedKey(97);
+                                executeParsedKey(97, mychar);
                             }
                             return true;
                             break;
@@ -65,7 +68,7 @@ function handleParsedKeyCode(keyCode,e) {
                             if (ctrlKey) {
                                 copySelectedContent();
                             } else {
-                                executeParsedKey(99);
+                                executeParsedKey(99, mychar);
                             }
                             break;
                         case 118 : 
@@ -73,66 +76,66 @@ function handleParsedKeyCode(keyCode,e) {
                              if (ctrlKey) {
                             	pasteSelectedContent();
                             } else {
-                                executeParsedKey(118);
+                                executeParsedKey(118, mychar);
                             }
                             break;
                     case 219 : // bracket right
-                            executeParsedKey(93);
+                            executeParsedKey(93, mychar);
                             return true;
                             break;
                         case 221: // bracket left
-                            executeParsedKey(91);
+                            executeParsedKey(91, mychar);
                             return true;
                             break;
                      case 220 : // UE or backslash
                             if (e.shiftKey) { 
-                                executeParsedKey(154);
+                                executeParsedKey(154, mychar);
                             } else {
-                                executeParsedKey(92);
+                                executeParsedKey(92, mychar);
                             }
                             return true;
                             break;
                              case 214 :
-                            executeParsedKey(153);
+                            executeParsedKey(153, mychar);
                             return true;
                             break;
                              case 196 :
-                            executeParsedKey(142);
+                            executeParsedKey(142, mychar);
                             return true;
                             break;
                     case 228 :
-                            executeParsedKey(132);
+                            executeParsedKey(132, mychar);
                             return true;
                             break;
                     case 246 :
-                            executeParsedKey(148);
+                            executeParsedKey(148, mychar);
                             return true;
                             break;
                         case 252 :
-                            executeParsedKey(129);
+                            executeParsedKey(129, mychar);
                             return true;
                             break;
                         case 191: 
-                            executeParsedKey(47);
+                            executeParsedKey(47, mychar);
                             return true;
                             break;
                     case 222: // single/double quote
                             if (!e.shiftKey) { 
-                            executeParsedKey(39);
+                            executeParsedKey(39, mychar);
                             } else {
-                            executeParsedKey(34); // double quote
+                            executeParsedKey(34, mychar); // double quote
                             }
                             return true;
                             break;
                     case 192 :
-                            executeParsedKey(39);
+                            executeParsedKey(39, mychar);
                             return true;
                             break;
                     case 48 : 
                             if (!e.shiftKey) { 
-                                executeParsedKey(48);
+                                executeParsedKey(48, mychar);
                             } else {
-                                executeParsedKey(61);
+                                executeParsedKey(61, mychar);
                             }
                             return true;
                             break;
@@ -150,64 +153,64 @@ function handleParsedKeyCode(keyCode,e) {
                             redrawCursor();
                             break;
                         case 180 : // single quote above sz
-                            executeParsedKey(39);
+                            executeParsedKey(39, mychar);
                             return true;
                             break;
                     case 39 : // right
                             if (e.shiftKey) { 
                               
-                                        executeParsedKey(39);
+                                        executeParsedKey(39, mychar);
                               }
                               return true;
                               break;
                           case 40 : // down
                               if (e.shiftKey) { 
                               
-                              executeParsedKey(40);
+                              executeParsedKey(40, mychar);
                               }
                               return true;
                               break;
                           case 37: // left, %
                               if (e.shiftKey) { 
                                 
-                                  executeParsedKey(37);
+                                  executeParsedKey(37, mychar);
                               }
                             return true;
                               break;
                           case 38: // up
                                if (e.shiftKey) { 
                               
-                                   executeParsedKey(38);
+                                   executeParsedKey(38, mychar);
                                }
                             return true;
                               break;
                           case 8: // backspace
+                              var myinput = inputInfo[currentInput-1];                              
                               
-                             if (cursorPosX>0) {
-                              setCursorPosX(cursorPosX-1);
-                              var currentPos = cursorPosX;
-                              
-                              while (currentPos < getDisplayWidth()-1) 
+                              if (myinput.cursorx>0) 
                               {
-                                      var asciiCode = screenCharacterArray[cursorPosY][currentPos+1][0];
-                                      var fgcolor = screenCharacterArray[cursorPosY][currentPos+1][1];
-                                      var bgcolor = screenCharacterArray[cursorPosY][currentPos+1][2];
-                                      
-                                      codepage.drawChar(ctx, asciiCode, fgcolor, bgcolor, currentPos, cursorPosY);
-                                      currentPos++;                                      
-                              }
+                                  myinput.currentvalue=myinput.currentvalue.substring(0, myinput.cursorx-1)+myinput.currentvalue.substring(myinput.cursorx);
                               
-                              codepage.drawChar(ctx, 32, 15, 0, getDisplayWidth()-1, cursorPosY);
+                              for (var i = myinput.cursorx-1; i < myinput.currentvalue.length; i++) {                                      
+                                       codepage.drawChar(ctx, myinput.currentvalue.charCodeAt(i), 11, 19, myinput.positionx+i, cursorPosY);
+                              }
+                              codepage.drawChar(ctx, 32, 11, 19, myinput.currentvalue.length+myinput.positionx, cursorPosY);
+                                    myinput.cursorx--;
+                                    setCursorPosX(cursorPosX-1);
+                                    
+                                    
+                              }
+                              inputInfo[currentInput-1]=myinput;
                               
                               redrawCursor();
-                            }
                           return true;
+                          break;
                          
                           default : 
                               
                                   
                                  
-                                executeParsedKey(keyCode);
+                                executeParsedKey(keyCode, mychar);
                            
                               return true;
                               break;
@@ -226,9 +229,11 @@ function handleParsedKeyCode(keyCode,e) {
                          if (!e.shiftKey) { 
                                    if (!e.ctrlKey) {
                                        
-                                       var myinput = inputInfo[currentInput];
-                                        if (myinput.cursorx<myinput.cursory) {
+                                       var myinput = inputInfo[currentInput-1];
+                                        if (myinput.cursorx<=myinput.currentvalue.length-1) {
+                                            
                                                 setCursorPosX(cursorPosX+1);
+                                                showCharacter();
                                                 redrawCursor();
                                                 myinput.cursorx++;
                                                 inputInfo[currentInput]=myinput;
@@ -274,9 +279,11 @@ function handleParsedKeyCode(keyCode,e) {
                               if (!e.shiftKey) {
                                    if (!e.ctrlKey) {
                                       
-                                        var myinput = inputInfo[currentInput];
+                                        var myinput = inputInfo[currentInput-1];
+                                        
                                         if (myinput.cursorx>0) {
                                                 setCursorPosX(cursorPosX-1);
+                                                showCharacter();
                                                 redrawCursor();
                                                 myinput.cursorx--;
                                                 inputInfo[currentInput]=myinput;
@@ -325,21 +332,43 @@ function handleParsedKeyCode(keyCode,e) {
    }
 
 
-function executeParsedKey(keyCode) {
+function executeParsedKey(keyCode, character) {
         showCharacter(false); 
         if (insert==false) {
                                     var myascii = screenCharacterArray[cursorPosY][cursorPosX][0] ;
                                   
-                                    codepage.drawChar(ctx, keyCode, currentForeground, currentBackground, cursorPosX, cursorPosY);
+                                    codepage.drawChar(ctx, keyCode, 11, 19, cursorPosX, cursorPosY);
                                     if (cursorPosX<getDisplayWidth()-2) { setCursorPosX(cursorPosX+1); }
+                                    showCharacter();
                                     redrawCursor();
-                                } else {
-                                    
+                                } else {                                    
                                    // TODO
+                                   var myinput = inputInfo[currentInput-1];                                   
+                                   codepage.drawChar(ctx, keyCode, 11, 19, cursorPosX, cursorPosY);
                                    
-                                    codepage.drawChar(ctx, keyCode, currentForeground, currentBackground, cursorPosX, cursorPosY);
-                                    if (cursorPosX<getDisplayWidth()-1) { setCursorPosX(cursorPosX+1); }
-                                    redrawCursor();
+                                   while (myinput.currentvalue.length<myinput.cursorx)
+                                   {
+                                       myinput.currentvalue+=" ";
+                                   }
+                                   myinput.currentvalue = myinput.currentvalue.substring(0, myinput.cursorx)+character+myinput.currentvalue.substring(myinput.cursorx);
+                                   
+                                   if (myinput.cursorx<myinput.length-1) {
+                                        setCursorPosX(cursorPosX+1);
+                                        showCharacter();
+                                        redrawCursor();
+                                        myinput.cursorx++;
+                                   }
+                                   if (myinput.currentvalue.length>myinput.length) {
+                                       myinput.currentvalue=myinput.currentvalue.substring(0,myinput.length);
+                                   }
+                                   inputInfo[currentInput-1]=myinput;
+                                   
+                                   for (var i = myinput.cursorx; i < myinput.currentvalue.length; i++) {
+                                      
+                                       codepage.drawChar(ctx, myinput.currentvalue.charCodeAt(i), 11, 19, myinput.positionx+i, cursorPosY);
+                                   }
+                                  
+                                   
                                 }
                                 
 }
