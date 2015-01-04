@@ -1,8 +1,24 @@
 {
-    "name": "form"
-  , "version": "0.0.1"
-  , "private": true
-  , "dependencies": {
+    "name": "asciiss",
+    "description": "Ascii Stylesheets",
+    "version": "0.0.1",
+    "main": "index.html",
+    "author": {
+        "name": "Oliver Bachmann",
+        "email": "obachmann@ymail.com"
+    },
+    "keywords": [],
+    "licenses": {
+        "type": "MIT"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/asciibox/asciiss.git"
+    },
+    "bugs": {
+        "url": "git://github.com/asciibox/asciirocks/issues"
+    }, 
+    "dependencies": {
     "asciirocks": "git+https://git@github.com/asciibox/asciirocks.git"
   }
 }
