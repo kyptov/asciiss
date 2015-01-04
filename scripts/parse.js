@@ -1,4 +1,329 @@
 var inputs = new Array();
+var currentInput = 0;
+
+
+
+/** This converts to keycodes to real characters. Language dependency included. Calls executeKey to show the keys in effect **/
+function handleParsedKeyCode(keyCode,e) {
+                
+                switch(keyCode){
+                  
+                    case 249 :
+                               executeParsedKey(151); // high two becomes ( for french keyboard
+                        return true;
+                        break;
+                            
+                    case 178: executeParsedKey(40); // high two becomes ( for french keyboard
+                        return true;
+                        break;
+                            
+                       case 224: executeParsedKey(133); // a accent
+                             
+                
+                      return true;
+                        case 232: executeParsedKey(138); // e accent
+                             
+                
+                      return true;
+                      break;
+                         case 231: executeKey(135); // ca
+                             
+                
+                      return true;
+                      break;
+            case 233: executeParsedKey(130); // e accent
+                
+                      return true;
+                      break;
+            case 176 : 
+                            executeParsedKey(167);
+                    return true;
+                    break;
+                case 112 : 
+                     if (e.ctrlKey) {
+                            alert(cursorPosX+"/"+cursorPosY);
+                            break;
+                     } else {
+                          executeParsedKey(112);
+                     }
+                break;
+                     case 96 : // opening single quote - convert to standard single quote due to cursor right bug on single quote
+                            executeParsedKey(39);
+                            return true;
+                            break;
+                        case 97 : // CTRL-A
+                            if (ctrlKey) {
+                                var ascii = screenCharacterArray[cursorPosY][cursorPosX];
+                                alert("Color / Foreground color / Background color: "+ascii);
+                            } else {
+                                executeParsedKey(97);
+                            }
+                            return true;
+                            break;
+                        case 99 : 
+                            //CTRL-C
+                            if (ctrlKey) {
+                                copySelectedContent();
+                            } else {
+                                executeParsedKey(99);
+                            }
+                            break;
+                        case 118 : 
+                            //CTRL-V
+                             if (ctrlKey) {
+                            	pasteSelectedContent();
+                            } else {
+                                executeParsedKey(118);
+                            }
+                            break;
+                    case 219 : // bracket right
+                            executeParsedKey(93);
+                            return true;
+                            break;
+                        case 221: // bracket left
+                            executeParsedKey(91);
+                            return true;
+                            break;
+                     case 220 : // UE or backslash
+                            if (e.shiftKey) { 
+                                executeParsedKey(154);
+                            } else {
+                                executeParsedKey(92);
+                            }
+                            return true;
+                            break;
+                             case 214 :
+                            executeParsedKey(153);
+                            return true;
+                            break;
+                             case 196 :
+                            executeParsedKey(142);
+                            return true;
+                            break;
+                    case 228 :
+                            executeParsedKey(132);
+                            return true;
+                            break;
+                    case 246 :
+                            executeParsedKey(148);
+                            return true;
+                            break;
+                        case 252 :
+                            executeParsedKey(129);
+                            return true;
+                            break;
+                        case 191: 
+                            executeParsedKey(47);
+                            return true;
+                            break;
+                    case 222: // single/double quote
+                            if (!e.shiftKey) { 
+                            executeParsedKey(39);
+                            } else {
+                            executeParsedKey(34); // double quote
+                            }
+                            return true;
+                            break;
+                    case 192 :
+                            executeParsedKey(39);
+                            return true;
+                            break;
+                    case 48 : 
+                            if (!e.shiftKey) { 
+                                executeParsedKey(48);
+                            } else {
+                                executeParsedKey(61);
+                            }
+                            return true;
+                            break;
+                        case 223: // sz
+                            executeParsedKey(225);
+                            break;
+                    case 13 : 
+                            showCharacter();
+                            setCursorPosX(0);
+                            console.log("getDisplayHeight:"+getDisplayHeight());
+                            if (cursorPosY<getDisplayHeight()-1) {
+                                console.log("Y:"+cursorPosY);
+                              setCursorPosY(cursorPosY+1);
+                            }
+                            redrawCursor();
+                            break;
+                        case 180 : // single quote above sz
+                            executeParsedKey(39);
+                            return true;
+                            break;
+                    case 39 : // right
+                            if (e.shiftKey) { 
+                              
+                                        executeParsedKey(39);
+                              }
+                              return true;
+                              break;
+                          case 40 : // down
+                              if (e.shiftKey) { 
+                              
+                              executeParsedKey(40);
+                              }
+                              return true;
+                              break;
+                          case 37: // left, %
+                              if (e.shiftKey) { 
+                                
+                                  executeParsedKey(37);
+                              }
+                            return true;
+                              break;
+                          case 38: // up
+                               if (e.shiftKey) { 
+                              
+                                   executeParsedKey(38);
+                               }
+                            return true;
+                              break;
+                          case 8: // backspace
+                              
+                             if (cursorPosX>0) {
+                              setCursorPosX(cursorPosX-1);
+                              var currentPos = cursorPosX;
+                              
+                              while (currentPos < getDisplayWidth()-1) 
+                              {
+                                      var asciiCode = screenCharacterArray[cursorPosY][currentPos+1][0];
+                                      var fgcolor = screenCharacterArray[cursorPosY][currentPos+1][1];
+                                      var bgcolor = screenCharacterArray[cursorPosY][currentPos+1][2];
+                                      
+                                      codepage.drawChar(ctx, asciiCode, fgcolor, bgcolor, currentPos, cursorPosY);
+                                      currentPos++;                                      
+                              }
+                              
+                              codepage.drawChar(ctx, 32, 15, 0, getDisplayWidth()-1, cursorPosY);
+                              
+                              redrawCursor();
+                            }
+                          return true;
+                         
+                          default : 
+                              
+                                  
+                                 
+                                executeParsedKey(keyCode);
+                           
+                              return true;
+                              break;
+                }
+                return false;
+}
+
+ /** This gets called due when a different event gets called **/
+   function handleParsedKeyCode2(keyCode,e) {
+               
+                switch(keyCode){
+                    
+                    case 39 : // cursor right
+                    console.log("39 copyMode:"+copyMode);
+                         showCharacter(false);
+                         if (!e.shiftKey) { 
+                                   if (!e.ctrlKey) {
+                                            if (cursorPosX<getDisplayWidth()-1) {
+                                                console.log("INCREASED");
+                                                setCursorPosX(cursorPosX+1);
+                                                redrawCursor();
+                                            }
+                                      } else {
+                                      
+                                         
+                                      }
+                                  } else {
+                                  	
+                                          
+                                          
+                                  }
+                              return true;
+                              break;
+                          case 40 : // cursor down
+                              showCharacter(false);
+                              if (!e.shiftKey) {
+                                  if (!e.ctrlKey) {
+                                        
+                                        if (cursorPosY<getDisplayHeight()-1) {
+                                       // cursorPosY++;
+                                        //redrawCursor();
+                                         }
+                                        } else {
+                                        }
+                               
+                              } else {
+                                         
+                                            }
+                              
+                              return true;
+                              break;
+                          case 37: // cursor left, %
+                               showCharacter(false);
+                              if (!e.shiftKey) {
+                                   if (!e.ctrlKey) {
+                                      
+                                        if (cursorPosX>0) {
+                                        setCursorPosX(cursorPosX-1);
+                                        redrawCursor();
+                                        }
+                                      } else {
+                                         
+                                      }
+                              } else {
+                                 
+                                          
+                                             
+                                      
+                              }
+                            return true;
+                              break;
+                          case 38: // cursor up
+                               showCharacter(false);
+                               if (!e.shiftKey) {
+                                   if (!e.ctrlKey) {
+                                       
+                                        if (cursorPosY>0) {
+                                              cursorPosY--;
+                                              redrawCursor();
+                                          }
+                                      } else {
+                                          
+                                      }
+                               } else {
+                                          
+                              }
+                              
+                              break;
+                          default:
+                         
+                              return true;
+                              break;
+                }
+                return false;
+   }
+
+
+function executeParsedKey(keyCode) {
+        showCharacter(false); 
+        if (insert==false) {
+                                    var myascii = screenCharacterArray[cursorPosY][cursorPosX][0] ;
+                                  
+                                    codepage.drawChar(ctx, keyCode, currentForeground, currentBackground, cursorPosX, cursorPosY);
+                                    if (cursorPosX<getDisplayWidth()-2) { setCursorPosX(cursorPosX+1); }
+                                    redrawCursor();
+                                } else {
+                                    
+                                   // TODO
+                                   
+                                    codepage.drawChar(ctx, keyCode, currentForeground, currentBackground, cursorPosX, cursorPosY);
+                                    if (cursorPosX<getDisplayWidth()-1) { setCursorPosX(cursorPosX+1); }
+                                    redrawCursor();
+                                }
+                                
+}
+
 
 var hexcolours = {"aliceblue": "#f0f8ff", "antiquewhite": "#faebd7", "aqua": "#00ffff", "aquamarine": "#7fffd4", "azure": "#f0ffff",
     "beige": "#f5f5dc", "bisque": "#ffe4c4", "black": "#000000", "blanchedalmond": "#ffebcd", "blue": "#0000ff", "blueviolet": "#8a2be2", "brown": "#a52a2a", "burlywood": "#deb887",
@@ -148,8 +473,10 @@ parseCSS.prototype.getBackgroundColor = function()
 // This gets called when an input field gets encountered while rendering the HTML
 function renderInput(that, positionx, positiony) {
 
-    var inputInfo = {"positionx": positionx, "positiony": positiony, "length": length, "value": value, "cursorposx": 1};
-    inputs[inputs.length] = inputInfo;
+    defaultvalue=that.val();
+    
+    var inputInfo = {"positionx": positionx, "positiony": positiony, "length": length, "currentvalue": value, "defaultvalue" : defaultvalue, "cursorposx": 1};
+    inputs.push(inputInfo);
 
     positionx = positionx + that.parent().text().length;
     var name = that.attr('name');
@@ -184,15 +511,9 @@ function calculateContent() {
     $('#ascii_content').html("<div>" + $('#ascii_textarea').val() + "</div>");
 
     // We have two iterations over the given HTML. The first one renders all input fields, the second one all tags again.
-    for (var i = 0; i <= 1; i++) {
-
-        var findwhat_tag = "input";
-        if (i == 1) {
-            findwhat_tag = "*";
-        }
 
         // Either find "input" or "*" tags (which are all elements in the end)
-        $('#ascii_content').find(findwhat_tag).each(function() {
+        $('#ascii_content').find("*").each(function() {
 
             var cssItems = new parseCSS($(this));
             var positionx = parseInt(cssItems.get('left').replace("px", ""));
@@ -257,7 +578,23 @@ function calculateContent() {
 
             }
 
+            if ((originalDIV.prop('tagName')) != "INPUT") {
+            var cssItems = new parseCSS(originalDIV);
+		// Get the "color" and "backlground-color" field from the style tag (if there is any).
+            var rgb_color = cssItems.getColor();
+            var rgb_backgroundcolor = cssItems.getBackgroundColor();
+            }
+
+           
             // Special checking if the original element is an input element. Here, nothing gets printed.
+            if ( ((originalDIV.prop('tagName')) == "INPUT") && (originalDIV.attr('type').toString().toUpperCase()=="BUTTON") ) {
+                var text="Submit";
+                if (typeof(originalDIV.attr('value'))!="undefined") {
+                    text=originalDIV.attr('value');
+                }
+                printthat(" "+text+" ", positionx, positiony, new Array(255,255,255), new Array(99,99,99)); // Show that text on the canvas
+                
+            } else
             if ((originalDIV.prop('tagName')) == "INPUT") {
                 // cursorPosX and cursorPosY are set to 0 by default. By checking this, we find out if we have it to do with the very first input element on the page. We need this to set the cursor position.
                 if ((cursorPosX == 0) && (cursorPosY == 0)) {
@@ -266,6 +603,9 @@ function calculateContent() {
                     // The position of the input field changes when we have text standing before it. This is like gettting text(), which does not take any other tags into account - just pure text. 
                     if (originalDIV.parent().text().length > 0) {
                         cursorPosX = cursorPosX + originalDIV.parent().text().length;
+                    }
+                    if (originalDIV.val().length>0) {
+                        cursorPosX = cursorPosX + originalDIV.val().length;
                     }
                     showCharacter();
                     // Als, the y position gets stored
@@ -276,6 +616,9 @@ function calculateContent() {
                     redrawCursor();
                 }
                 // Making a function call in order to have it shown smoothly
+                
+                currentInput=1;
+                
                 renderInput(originalDIV, positionx, positiony);
                 // 
                 originalDIV.remove();
@@ -283,17 +626,27 @@ function calculateContent() {
             // If this is not an input element.
             if (hasChildren) { // Special check for hasChildren. See else statement for further information.
                 var text = originalDIV.clone().children().remove().end().text(); // Remove all other tags, so we have it to do with pure text
-                printthat(text, originalDIV, positionx, positiony); // Show that text on the canvas
+                printthat(text, positionx, positiony,rgb_color,rgb_backgroundcolor); // Show that text on the canvas
             } else {
                 // We set hasChildren when we have found any children elements. Otherwise this is just plain text we find inside the editable textarea. This is special handling,
                 // because, since there are no child divs or spans, we would not output anything otherwise.
                 var text = originalDIV.html();
-                printthat(text, originalDIV, positionx, positiony);
+                printthat(text, positionx, positiony,rgb_color,rgb_backgroundcolor);
             }
 
 
         });
 
+function checkSelectionOnParsed() {
+    
+    for (var i = 0; i < inputs.length; i++) {
+     
+        setCursorPosX(myCursorPosX);
+        setCursorPosY(myCursorPosY);
+    
     }
+                    
+    
+}
 
 }

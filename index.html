@@ -23,8 +23,61 @@
     var doubleClickStarted = false;
     var doubleClickInterval;
    
+   /** This registers a key event listener, so entering something in the browser has functionality **/
+   function registerParsedKeyEventListener() {
+		
+                document.body.addEventListener('keypress',
+                function(e)
+                {
+                
+                    var keyCode = e.which;
+                   
+                    if (keyCode!=0) {
+                        e.preventDefault(); 
+                        
+                        handleParsedKeyCode(keyCode,e);
+                    }
+                
+                },
+                false);
+                
+                document.body.addEventListener('keydown',
+                function(e)
+                {
+                 
+                    var keyCode = e.which;
+                  
+					if (keyCode == 17) {
+                        ctrlKey=true;
+                    } else
+                    if (keyCode==27) {
+                         if ($('#panel').css('display')=="block") {
+                            hidePanel(); } else {
+                            showPanel();
+                            }
+                    } else
+                    if ( (keyCode<=40) && (keyCode>=37) ) { 
+                        e.preventDefault();
+                        handleParsedKeyCode2(keyCode,e);
+                    } else if (keyCode==8) {
+                        e.preventDefault();
+                        handleParsedKeyCode(keyCode, e);
+                    }
+                    
+                
+                },
+                false);
+                
+               
+                
+    }
+   
+   
+   
 
     window.onload = function() {
+        
+        registerParsedKeyEventListener();
         
 		// At the start, if there already is some HTML, the user gets asked if he wants to keep the original HTML
         if (localStorage.getItem("html")!=null) {
@@ -80,8 +133,8 @@
                     if (myCursorPosX>=getDisplayWidth()-1) { console.log(myCursorPosX+" too far"); setCursorPosX(getDisplayWidth()-1); redrawCursor(); return; }
                     if (myCursorPosY>=getDisplayHeight()-1) { console.log(myCursorPosY+" too high"); setCursorPosY(getDisplayHeight()-1); redrawCursor(); return; }
                     
-                    setCursorPosX(myCursorPosX);
-                    setCursorPosY(myCursorPosY);
+                    
+                    checkSelectionOnParsed(myCursorPosX, myCursorPosY);
                     
                     redrawCursor();
                     
@@ -93,14 +146,7 @@
     
 
 	// Gets called from calculateContent and shows the parameter text at the given x and y position on the canvas
-    function printthat(text, that, positionx, positiony) {
-
-		// We want to find out more about the style tag of the printed element. For this we have passed the variable "that".
-        var cssItems = new parseCSS(that);
-
-		// Get the "color" and "backlground-color" field from the style tag (if there is any).
-        var rgb_color = cssItems.getColor();
-        var rgb_backgroundcolor = cssItems.getBackgroundColor();
+    function printthat(text, positionx, positiony,rgb_color,rgb_backgroundcolor) {
 
         //alert(rgb_color[0]+"/"+rgb_color[1]+"/"+rgb_color[2]);
 
@@ -109,6 +155,7 @@
             var asciiCode = text.charCodeAt(i);
             if (asciiCode >= 32)
             {
+               
                 var fgColor = x256(rgb_color[0], rgb_color[1], rgb_color[2]);
                 var bgColor = x256(rgb_backgroundcolor[0], rgb_backgroundcolor[1], rgb_backgroundcolor[2]);
 				// Draw on canvas
@@ -159,9 +206,10 @@
 	<!-- This is the textarea which is used for entering the HTML and CSS for showing the page on the canvas -->
         The HTML:<textarea id="ascii_textarea" style="width:1024px;height:640;" rows="20" onkeyup="updateAsciiArea();">
 <span style="top:20px;left:20px;color:white;">This look and feel of this text was made by defining CSS style attributes. The HTML was parsed by javascript and the result is this.</span>
-<span style="top:22px;left:20px;color:#3caac8;">Click on the screen to see the HTML that belongs to this page.</span>
+<span style="top:22px;left:20px;color:#3caac8;">Please login!</span>
 <form onsubmit="submit();">
-<span style="top:25px;left:20px;color:white;">We can also create input fields (which are not editable at the moment): <input type="text" name="test" /><input type="button" onclick="submit();"></span>
+    <span style="top:25px;left:20px;color:white;">Username: <input type="text" name="username" value="Guest"/></span>
+    <span style="top:27px;left:20px;color:white;">Password: <input type="text" name="password" /><span style="left:45px;"><input type="button" onclick="submit();"></span></span>
 </form>
 
         </textarea>
