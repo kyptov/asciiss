@@ -1,4 +1,4 @@
-var inputs = new Array();
+var inputInfo = new Array();
 var currentInput = 0;
 
 
@@ -225,11 +225,14 @@ function handleParsedKeyCode(keyCode,e) {
                          showCharacter(false);
                          if (!e.shiftKey) { 
                                    if (!e.ctrlKey) {
-                                            if (cursorPosX<getDisplayWidth()-1) {
-                                                console.log("INCREASED");
+                                       
+                                       var myinput = inputInfo[currentInput];
+                                        if (myinput.cursorx<myinput.cursory) {
                                                 setCursorPosX(cursorPosX+1);
                                                 redrawCursor();
-                                            }
+                                                myinput.cursorx++;
+                                                inputInfo[currentInput]=myinput;
+                                        }
                                       } else {
                                       
                                          
@@ -246,17 +249,24 @@ function handleParsedKeyCode(keyCode,e) {
                               if (!e.shiftKey) {
                                   if (!e.ctrlKey) {
                                         
+                                        /*
                                         if (cursorPosY<getDisplayHeight()-1) {
-                                       // cursorPosY++;
-                                        //redrawCursor();
+                                         cursorPosY++;
+                                         redrawCursor();
                                          }
                                         } else {
-                                        }
+                                        }*/
+                                   
+                                            if (currentInput<inputInfo.length) {
+                                                currentInput++;
+                                                setFocusOnInputField();
+                                                
+                                            }
                                
                               } else {
                                          
                                             }
-                              
+                                        }
                               return true;
                               break;
                           case 37: // cursor left, %
@@ -264,10 +274,14 @@ function handleParsedKeyCode(keyCode,e) {
                               if (!e.shiftKey) {
                                    if (!e.ctrlKey) {
                                       
-                                        if (cursorPosX>0) {
-                                        setCursorPosX(cursorPosX-1);
-                                        redrawCursor();
+                                        var myinput = inputInfo[currentInput];
+                                        if (myinput.cursorx>0) {
+                                                setCursorPosX(cursorPosX-1);
+                                                redrawCursor();
+                                                myinput.cursorx--;
+                                                inputInfo[currentInput]=myinput;
                                         }
+                                        
                                       } else {
                                          
                                       }
@@ -284,10 +298,16 @@ function handleParsedKeyCode(keyCode,e) {
                                if (!e.shiftKey) {
                                    if (!e.ctrlKey) {
                                        
-                                        if (cursorPosY>0) {
+                                       if (currentInput>0) {
+                                                currentInput--;
+                                                setFocusOnInputField();
+                                                
+                                            }
+                                       
+                                        /*if (cursorPosY>0) {
                                               cursorPosY--;
                                               redrawCursor();
-                                          }
+                                          }*/
                                       } else {
                                           
                                       }
@@ -475,8 +495,6 @@ function renderInput(that, positionx, positiony) {
 
     defaultvalue=that.val();
     
-    var inputInfo = {"positionx": positionx, "positiony": positiony, "length": length, "currentvalue": value, "defaultvalue" : defaultvalue, "cursorposx": 1};
-    inputs.push(inputInfo);
 
     positionx = positionx + that.parent().text().length;
     var name = that.attr('name');
@@ -499,6 +517,10 @@ function renderInput(that, positionx, positiony) {
             codepage.drawChar(ctx, asciiCode, 11, 19, positionx + i, positiony);
         }
     }
+    
+    var inputArray = {"cursorx" : defaultvalue.length, "positionx": positionx, "positiony": positiony, "length": length, "currentvalue": defaultvalue, "defaultvalue" : defaultvalue, "cursorposx": 1};
+    inputInfo.push(inputArray);
+    
 }
 
 
@@ -649,4 +671,17 @@ function checkSelectionOnParsed() {
     
 }
 
+
+
+}
+
+function setFocusOnInputField() {
+ 
+    // var inputInfo = {"cursorx" : defaultvalue.length, "positionx": positionx, "positiony": positiony, "length": length, "currentvalue": defaultvalue, "defaultvalue" : defaultvalue, "cursorposx": 1};
+    var myinput = inputInfo[currentInput-1];
+ 
+    setCursorPosX(myinput.positionx+myinput.cursorx);
+    setCursorPosY(myinput.positiony);
+    
+    
 }
