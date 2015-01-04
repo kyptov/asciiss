@@ -22,12 +22,42 @@
 <script>
     var inputs = new Array();
 
+	var hexcolours = {"aliceblue":"#f0f8ff","antiquewhite":"#faebd7","aqua":"#00ffff","aquamarine":"#7fffd4","azure":"#f0ffff",
+    "beige":"#f5f5dc","bisque":"#ffe4c4","black":"#000000","blanchedalmond":"#ffebcd","blue":"#0000ff","blueviolet":"#8a2be2","brown":"#a52a2a","burlywood":"#deb887",
+    "cadetblue":"#5f9ea0","chartreuse":"#7fff00","chocolate":"#d2691e","coral":"#ff7f50","cornflowerblue":"#6495ed","cornsilk":"#fff8dc","crimson":"#dc143c","cyan":"#00ffff",
+    "darkblue":"#00008b","darkcyan":"#008b8b","darkgoldenrod":"#b8860b","darkgray":"#a9a9a9","darkgreen":"#006400","darkkhaki":"#bdb76b","darkmagenta":"#8b008b","darkolivegreen":"#556b2f",
+    "darkorange":"#ff8c00","darkorchid":"#9932cc","darkred":"#8b0000","darksalmon":"#e9967a","darkseagreen":"#8fbc8f","darkslateblue":"#483d8b","darkslategray":"#2f4f4f","darkturquoise":"#00ced1",
+    "darkviolet":"#9400d3","deeppink":"#ff1493","deepskyblue":"#00bfff","dimgray":"#696969","dodgerblue":"#1e90ff",
+    "firebrick":"#b22222","floralwhite":"#fffaf0","forestgreen":"#228b22","fuchsia":"#ff00ff",
+    "gainsboro":"#dcdcdc","ghostwhite":"#f8f8ff","gold":"#ffd700","goldenrod":"#daa520","gray":"#808080","green":"#008000","greenyellow":"#adff2f",
+    "honeydew":"#f0fff0","hotpink":"#ff69b4",
+    "indianred ":"#cd5c5c","indigo":"#4b0082","ivory":"#fffff0","khaki":"#f0e68c",
+    "lavender":"#e6e6fa","lavenderblush":"#fff0f5","lawngreen":"#7cfc00","lemonchiffon":"#fffacd","lightblue":"#add8e6","lightcoral":"#f08080","lightcyan":"#e0ffff","lightgoldenrodyellow":"#fafad2",
+    "lightgrey":"#d3d3d3","lightgreen":"#90ee90","lightpink":"#ffb6c1","lightsalmon":"#ffa07a","lightseagreen":"#20b2aa","lightskyblue":"#87cefa","lightslategray":"#778899","lightsteelblue":"#b0c4de",
+    "lightyellow":"#ffffe0","lime":"#00ff00","limegreen":"#32cd32","linen":"#faf0e6",
+    "magenta":"#ff00ff","maroon":"#800000","mediumaquamarine":"#66cdaa","mediumblue":"#0000cd","mediumorchid":"#ba55d3","mediumpurple":"#9370d8","mediumseagreen":"#3cb371","mediumslateblue":"#7b68ee",
+    "mediumspringgreen":"#00fa9a","mediumturquoise":"#48d1cc","mediumvioletred":"#c71585","midnightblue":"#191970","mintcream":"#f5fffa","mistyrose":"#ffe4e1","moccasin":"#ffe4b5",
+    "navajowhite":"#ffdead","navy":"#000080",
+    "oldlace":"#fdf5e6","olive":"#808000","olivedrab":"#6b8e23","orange":"#ffa500","orangered":"#ff4500","orchid":"#da70d6",
+    "palegoldenrod":"#eee8aa","palegreen":"#98fb98","paleturquoise":"#afeeee","palevioletred":"#d87093","papayawhip":"#ffefd5","peachpuff":"#ffdab9","peru":"#cd853f","pink":"#ffc0cb","plum":"#dda0dd","powderblue":"#b0e0e6","purple":"#800080",
+    "red":"#ff0000","rosybrown":"#bc8f8f","royalblue":"#4169e1",
+    "saddlebrown":"#8b4513","salmon":"#fa8072","sandybrown":"#f4a460","seagreen":"#2e8b57","seashell":"#fff5ee","sienna":"#a0522d","silver":"#c0c0c0","skyblue":"#87ceeb","slateblue":"#6a5acd","slategray":"#708090","snow":"#fffafa","springgreen":"#00ff7f","steelblue":"#4682b4",
+    "tan":"#d2b48c","teal":"#008080","thistle":"#d8bfd8","tomato":"#ff6347","turquoise":"#40e0d0",
+    "violet":"#ee82ee",
+    "wheat":"#f5deb3","white":"#ffffff","whitesmoke":"#f5f5f5",
+    "yellow":"#ffff00","yellowgreen":"#9acd32"};
+
 	// Whenever a key down gets pressed, this stores the current HTML inside the localstorage object. Also, it copies all HTML to a different div (ascii_input) where it gets rendered.
     function updateAsciiArea() {
         $('#ascii_area').html($('#ascii_input').val());
 
         localStorage.setItem("html", $('#ascii_textarea').val());
     }
+
+	function hexToR(h) {return parseInt((cutHex(h)).substring(0,2),16)}
+	function hexToG(h) {return parseInt((cutHex(h)).substring(2,4),16)}
+	function hexToB(h) {return parseInt((cutHex(h)).substring(4,6),16)}
+	function cutHex(h) {return (h.charAt(0)=="#") ? h.substring(1,7):h}
 
     window.onload = function() {
         
@@ -87,6 +117,12 @@
         
     };
 
+    function clearScreen() {
+        ctx = document.getElementById("ansi").getContext("2d");
+        ctx.fillStyle = 0;
+        ctx.fillRect(0, 0, document.getElementById('ansi').width, document.getElementById('ansi').height);
+    }
+
     function switchbutton() {
         if ($('#switchbutton').val() == 'Show Ascii') {
             $('#switchbutton').val('Show HTML');
@@ -133,14 +169,22 @@
         var color = this.get('color');
         
         if (color == "") {
-
             rgb_color = {};
             rgb_color[0] = 255;
             rgb_color[1] = 255;
             rgb_color[2] = 255;
-        } else {
-
-            var rgb_color = color.substring(4, color.length - 1).replace(/ /g, '').split(',');
+        } else 
+		if (typeof(hexcolours[color])!="undefined") {
+			var color = hexcolours[color];
+			var rgb_color=new Array();
+			rgb_color[0] = hexToR(color);
+			rgb_color[1] = hexToG(color);
+			rgb_color[2] = hexToB(color);
+		} else {
+            var rgb_color=new Array();
+			rgb_color[0] = hexToR(color);
+			rgb_color[1] = hexToG(color);
+			rgb_color[2] = hexToB(color);
         }
         return rgb_color;
     }
@@ -157,9 +201,17 @@
             rgb_backgroundcolor[0] = 0;
             rgb_backgroundcolor[1] = 0;
             rgb_backgroundcolor[2] = 0;
-        } else {
-
-            var rgb_backgroundcolor = backgroundcolor.substring(4, backgroundcolor.length - 1).replace(/ /g, '').split(',');
+        } else if (typeof(hexcolours[color])!="undefined") {
+			var color = hexcolours[color];
+			var rgb_color=new Array();
+			rgb_backgroundcolor[0] = hexToR(color);
+			rgb_backgroundcolor[1] = hexToG(color);
+			rgb_backgroundcolor[2] = hexToB(color);
+		} else {
+            var rgb_backgroundcolor=new Array();
+			rgb_backgroundcolor[0] = hexToR(color);
+			rgb_backgroundcolor[1] = hexToG(color);
+			rgb_backgroundcolor[2] = hexToB(color);
         }
         return rgb_backgroundcolor;
     }
@@ -285,7 +337,7 @@
                         if (originalDIV.parent().text().length>0) {
                             cursorPosX = cursorPosX + originalDIV.parent().text().length;
                         }                        
-                        
+                        showCharacter();
 						// Als, the y position gets stored
                         cursorPosY=positiony;                        
                         setCursorPosX(cursorPosX);
@@ -326,14 +378,14 @@
         var rgb_color = cssItems.getColor();
         var rgb_backgroundcolor = cssItems.getBackgroundColor();
 
+
 		// Then iterate over the given text.
         for (var i = 0; i < text.length; i++) {
             var asciiCode = text.charCodeAt(i);
             if (asciiCode >= 32)
             {
-                var fgColor = x256(rgb_color[0], rgb_color[1], rgb_color[2]) - 1;
+                var fgColor = x256(rgb_color[0], rgb_color[1], rgb_color[2]) ;
                 var bgColor = x256(rgb_backgroundcolor[0], rgb_backgroundcolor[1], rgb_backgroundcolor[2]);
-
 				// Draw on canvas
                 codepage.drawChar(ctx, asciiCode, fgColor, bgColor, positionx + i, positiony);
             }
@@ -349,6 +401,9 @@
         $('#ascii_html').hide();
         drawAsciiTable();
     }
+
+
+
 
 	// gets called from testAsciiTable and the only purpose is testing the ascii table.
     function drawAsciiTable() {
