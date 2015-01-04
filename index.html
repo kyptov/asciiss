@@ -125,6 +125,7 @@
 
     function switchbutton() {
         if ($('#switchbutton').val() == 'Show Ascii') {
+			clearScreen();
             $('#switchbutton').val('Show HTML');
             $('#ansi').show();
             $('#ascii_html').hide();
@@ -396,6 +397,7 @@
 
 	// This is just a test function if the ascii table works and gets properly shown
     function testAsciiTable() {
+
         $('#switchbutton').val('Show HTML');
         $('#ansi').show();
         $('#ascii_html').hide();
