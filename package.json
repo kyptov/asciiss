@@ -1,24 +1,29 @@
 {
-    "name": "asciiss",
-    "description": "Ascii Stylesheets",
+    "name": "splitscreenchat",
+    "description": "",
     "version": "0.0.1",
-    "main": "index.html",
+    "main": "./index.js",
     "author": {
-        "name": "Oliver Bachmann",
-        "email": "obachmann@ymail.com"
+        "name": "asciibox",
+        "email": "oliverbach@gmail.com"
     },
     "keywords": [],
     "licenses": {
-        "type": "MIT"
+        "type": "none"
     },
     "repository": {
         "type": "git",
-        "url": "git://github.com/asciibox/asciiss.git"
+        "url": "https://github.com/asciibox/splitscreenchat.git"
     },
-    "bugs": {
-        "url": "git://github.com/asciibox/asciirocks/issues"
-    }, 
     "dependencies": {
-    "asciirocks": "git+https://git@github.com/asciibox/asciirocks.git"
+    "asciirocks": "git+https://git@github.com/asciibox/asciirocks.git",
+    "asciiss": "git+https://git@github.com/asciibox/asciiss.git",
+    "express": "*",
+    "http-server": "*",
+    "indexof": "*",
+    "socket.io": "*",
+    "requirejs": "*",
+    "string-stream": "*",
+    "cheerio": "*"
   }
 }
