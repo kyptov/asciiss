@@ -1,156 +1,148 @@
+(function(global) {
+	
 var buttonInfo = new Array();
 
 var inputInfo = new Array();
 var currentInput = 0;
-
-
+var parserInsert = true;
 
 /** This converts to keycodes to real characters. Language dependency included. Calls executeKey to show the keys in effect **/
 function handleParsedKeyCode(keyCode,e,possible_socket) {
-                
                 
                 var mychar = String.fromCharCode(e.which);
                 
                 switch(keyCode){
                   
                     case 249 :
-                               executeParsedKey(151, mychar); // high two becomes ( for french keyboard
+                               executeParsedKey(151, mychar, possible_socket); // high two becomes ( for french keyboard
                         return true;
                         break;
                             
-                    case 178: executeParsedKey(40, mychar); // high two becomes ( for french keyboard
+                    case 178: executeParsedKey(40, mychar, possible_socket); // high two becomes ( for french keyboard
                         return true;
                         break;
                             
-                       case 224: executeParsedKey(133, mychar); // a accent
+                       case 224: executeParsedKey(133, mychar, possible_socket); // a accent
                              
                 
                       return true;
-                        case 232: executeParsedKey(138, mychar); // e accent
+                        case 232: executeParsedKey(138, mychar, possible_socket); // e accent
                              
                 
                       return true;
                       break;
-                         case 231: executeKey(135, mychar); // ca
+                         case 231: executeKey(135, mychar, possible_socket); // ca
                              
                 
                       return true;
                       break;
-            case 233: executeParsedKey(130, mychar); // e accent
+            case 233: executeParsedKey(130, mychar, possible_socket); // e accent
                 
                       return true;
                       break;
             case 176 : 
-                            executeParsedKey(167, mychar);
+                            executeParsedKey(167, mychar, possible_socket);
                     return true;
                     break;
-                case 112 : 
-                     if (e.ctrlKey) {
-                            alert(cursorPosX+"/"+cursorPosY);
-                            break;
-                     } else {
-                          executeParsedKey(112, mychar);
-                     }
-                break;
                      case 96 : // opening single quote - convert to standard single quote due to cursor right bug on single quote
-                            executeParsedKey(39, mychar);
+                            executeParsedKey(39, mychar, possible_socket);
                             return true;
                             break;
                     case 219 : // bracket right
-                            executeParsedKey(93, mychar);
+                            executeParsedKey(93, mychar, possible_socket);
                             return true;
                             break;
                         case 221: // bracket left
-                            executeParsedKey(91, mychar);
+                            executeParsedKey(91, mychar, possible_socket);
                             return true;
                             break;
                      case 220 : // UE or backslash
                             if (e.shiftKey) { 
-                                executeParsedKey(154, mychar);
+                                executeParsedKey(154, mychar, possible_socket);
                             } else {
-                                executeParsedKey(92, mychar);
+                                executeParsedKey(92, mychar, possible_socket);
                             }
                             return true;
                             break;
                              case 214 :
-                            executeParsedKey(153, mychar);
+                            executeParsedKey(153, mychar, possible_socket);
                             return true;
                             break;
                              case 196 :
-                            executeParsedKey(142, mychar);
+                            executeParsedKey(142, mychar, possible_socket);
                             return true;
                             break;
                     case 228 :
-                            executeParsedKey(132, mychar);
+                            executeParsedKey(132, mychar, possible_socket);
                             return true;
                             break;
                     case 246 :
-                            executeParsedKey(148, mychar);
+                            executeParsedKey(148, mychar, possible_socket);
                             return true;
                             break;
                         case 252 :
-                            executeParsedKey(129, mychar);
+                            executeParsedKey(129, mychar, possible_socket);
                             return true;
                             break;
                         case 191: 
-                            executeParsedKey(47, mychar);
+                            executeParsedKey(47, mychar, possible_socket);
                             return true;
                             break;
                     case 222: // single/double quote
                             if (!e.shiftKey) { 
-                            executeParsedKey(39, mychar);
+                            executeParsedKey(39, mychar, possible_socket);
                             } else {
-                            executeParsedKey(34, mychar); // double quote
+                            executeParsedKey(34, mychar, possible_socket); // double quote
                             }
                             return true;
                             break;
                     case 192 :
-                            executeParsedKey(39, mychar);
+                            executeParsedKey(39, mychar, possible_socket);
                             return true;
                             break;
                     case 48 : 
                             if (!e.shiftKey) { 
-                                executeParsedKey(48, mychar);
+                                executeParsedKey(48, mychar, possible_socket);
                             } else {
-                                executeParsedKey(61, mychar);
+                                executeParsedKey(61, mychar, possible_socket);
                             }
                             return true;
                             break;
                         case 223: // sz
-                            executeParsedKey(225);
+                            executeParsedKey(225, possible_socket);
                             break;
                     case 13 : 
-                            executeParsedKey(13, mychar);
+                            executeParsedKey(13, mychar, possible_socket);
                             break;
                         case 180 : // single quote above sz
-                            executeParsedKey(39, mychar);
+                            executeParsedKey(39, mychar, possible_socket);
                             return true;
                             break;
                     case 39 : // right
                             if (e.shiftKey) { 
                               
-                                        executeParsedKey(39, mychar);
+                                        executeParsedKey(39, mychar, possible_socket);
                               }
                               return true;
                               break;
                           case 40 : // down
                               if (e.shiftKey) { 
                               
-                              executeParsedKey(40, mychar);
+                              executeParsedKey(40, mychar, possible_socket);
                               }
                               return true;
                               break;
                           case 37: // left, %
                               if (e.shiftKey) { 
                                 
-                                  executeParsedKey(37, mychar);
+                                  executeParsedKey(37, mychar, possible_socket);
                               }
                             return true;
                               break;
                           case 38: // up
                                if (e.shiftKey) { 
                               
-                                   executeParsedKey(38, mychar);
+                                   executeParsedKey(38, mychar, possible_socket);
                                }
                             return true;
                               break;
@@ -163,11 +155,11 @@ function handleParsedKeyCode(keyCode,e,possible_socket) {
                                   myinput.currentvalue=myinput.currentvalue.substring(0, myinput.cursorx-1)+myinput.currentvalue.substring(myinput.cursorx);
                               
                               for (var i = myinput.cursorx-1; i < myinput.currentvalue.length; i++) {                                      
-                                       parsed_drawChar(ctx, myinput.currentvalue.charCodeAt(i), 11, 19, myinput.positionx+i, cursorPosY, possible_socket);
+                                       parsed_drawChar(ctx, myinput.currentvalue.charCodeAt(i), 11, 19, myinput.positionx+i, parsed_getCursorPosY(), possible_socket);
                               }
-                              parsed_drawChar(ctx, 32, 11, 19, myinput.currentvalue.length+myinput.positionx, cursorPosY, possible_socket);
+                              parsed_drawChar(ctx, 32, 11, 19, myinput.currentvalue.length+myinput.positionx, parsed_getCursorPosY(), possible_socket);
                                     myinput.cursorx--;
-                                    parsed_setCursorPosX(cursorPosX-1, possible_socket);
+                                    parsed_setCursorPosX(parsed_getCursorPosX()-1, possible_socket);
                                     
                                     
                               }
@@ -181,13 +173,15 @@ function handleParsedKeyCode(keyCode,e,possible_socket) {
                               
                                   
                                  
-                                executeParsedKey(keyCode, mychar);
+                                executeParsedKey(keyCode, mychar, possible_socket);
                            
                               return true;
                               break;
                 }
                 return false;
 }
+
+global.handleParsedKeyCode = handleParsedKeyCode;
 
  /** This gets called due when a different event gets called **/
    function handleParsedKeyCode2(keyCode,e,possible_socket) {
@@ -203,7 +197,7 @@ function handleParsedKeyCode(keyCode,e,possible_socket) {
                                        var myinput = inputInfo[currentInput-1];
                                         if (myinput.cursorx<=myinput.currentvalue.length-1) {
                                             
-                                                parsed_setCursorPosX(cursorPosX+1, possible_socket);
+                                                parsed_setCursorPosX(parsed_getCursorPosX()+1, possible_socket);
                                                 parsed_showCharacter(true, possible_socket);
                                                 parsed_redrawCursor(possible_socket);
                                                 myinput.cursorx++;
@@ -253,7 +247,7 @@ function handleParsedKeyCode(keyCode,e,possible_socket) {
                                         var myinput = inputInfo[currentInput-1];
                                         
                                         if (myinput.cursorx>0) {
-                                                parsed_setCursorPosX(cursorPosX-1, possible_socket);
+                                                parsed_setCursorPosX(parsed_getCursorPosX()-1, possible_socket);
                                                 parsed_showCharacter(true, possible_socket);
                                                 parsed_redrawCursor(possible_socket);
                                                 myinput.cursorx--;
@@ -302,21 +296,25 @@ function handleParsedKeyCode(keyCode,e,possible_socket) {
                 return false;
    }
 
+global.handleParsedKeyCode2 = handleParsedKeyCode2;
 
-function executeParsedKey(keyCode, character, possible_socket) {
+
+function executeParsedKey(keyCode, character,  possible_socket) {
         parsed_showCharacter(false, possible_socket); 
-        if (insert==false) {
-                                    var myascii = screenCharacterArray[cursorPosY][cursorPosX][0] ;
+        if (parserInsert==false) {
+                                    var myascii = screenCharacterArray[parsed_getCursorPosY()][parsed_getCursorPosX()][0] ;
                                   
-                                    parsed_drawChar(ctx, keyCode, 11, 19, cursorPosX, cursorPosY, possible_socket);
-                                    if (cursorPosX<getDisplayWidth()-2) { parsed_setCursorPosX(cursorPosX+1, possible_socket); }
+                                    parsed_drawChar(ctx, keyCode, 11, 19, parsed_getCursorPosX(), parsed_getCursorPosY(), possible_socket);
+                                    if (parsed_getCursorPosX()<getDisplayWidth()-2) { parsed_setCursorPosX(parsed_getCursorPosX()+1, possible_socket); }
                                     parsed_showCharacter(true, possible_socket);
                                     parsed_redrawCursor(possible_socket);
                                 } else {                                    
                                    // TODO
-                                   var myinput = inputInfo[currentInput-1];                                   
-                                   parsed_drawChar(ctx, keyCode, 11, 19, cursorPosX, cursorPosY, possible_socket);
                                    
+                                   var myinput = inputInfo[currentInput-1];                                   
+                                   parsed_drawChar(ctx, keyCode, 11, 19, parsed_getCursorPosX(), parsed_getCursorPosY(), possible_socket);
+                                   console.log("inputInfo.length:"+inputInfo.length);
+                                   console.log("currentInput:"+currentInput);
                                    while (myinput.currentvalue.length<myinput.cursorx)
                                    {
                                        myinput.currentvalue+=" ";
@@ -324,7 +322,7 @@ function executeParsedKey(keyCode, character, possible_socket) {
                                    myinput.currentvalue = myinput.currentvalue.substring(0, myinput.cursorx)+character+myinput.currentvalue.substring(myinput.cursorx);
                                    
                                    if (myinput.cursorx<myinput.length-1) {
-                                        parsed_setCursorPosX(cursorPosX+1, possible_socket);
+                                        parsed_setCursorPosX(parsed_getCursorPosX()+1, possible_socket);
                                         parsed_showCharacter(true, possible_socket);
                                         parsed_redrawCursor(possible_socket);
                                         myinput.cursorx++;
@@ -336,13 +334,15 @@ function executeParsedKey(keyCode, character, possible_socket) {
                                    
                                    for (var i = myinput.cursorx; i < myinput.currentvalue.length; i++) {
                                       
-                                       parsed_drawChar(ctx, myinput.currentvalue.charCodeAt(i), 11, 19, myinput.positionx+i, cursorPosY, possible_socket);
+                                       parsed_drawChar(ctx, myinput.currentvalue.charCodeAt(i), 11, 19, myinput.positionx+i, parsed_getCursorPosY(), possible_socket);
                                    }
                                   
                                    
                                 }
                                 
 }
+
+global.executeParsedKey = executeParsedKey;
 
 
 var hexcolours = {"aliceblue": "#f0f8ff", "antiquewhite": "#faebd7", "aqua": "#00ffff", "aquamarine": "#7fffd4", "azure": "#f0ffff",
@@ -377,24 +377,39 @@ function updateAsciiArea() {
     localStorage.setItem("html", $('#ascii_textarea').val());
 }
 
+global.updateAsciiArea = updateAsciiArea;
+
 function hexToR(h) {
     return parseInt((cutHex(h)).substring(0, 2), 16)
 }
+
+global.hexToR = hexToR;
+
 function hexToG(h) {
     return parseInt((cutHex(h)).substring(2, 4), 16)
 }
+
+global.hexToG = hexToG;
+
 function hexToB(h) {
     return parseInt((cutHex(h)).substring(4, 6), 16)
 }
+
+global.hexToB = hexToB;
+
 function cutHex(h) {
     return (h.charAt(0) == "#") ? h.substring(1, 7) : h
 }
+
+global.cutHex = cutHex;
 
 function clearScreen() {
     ctx = document.getElementById("ansi").getContext("2d");
     ctx.fillStyle = 0;
     ctx.fillRect(0, 0, document.getElementById('ansi').width, document.getElementById('ansi').height);
 }
+
+global.clearScreen = clearScreen;
 
 function switchbutton() {
     if ($('#switchbutton').val() == 'Show Ascii') {
@@ -411,6 +426,8 @@ function switchbutton() {
     }
 }
 
+global.switchbutton = switchbutton;
+
 // This gets called fro mthe prototype function and stores all style css commands inside this.styles, for example for "left:20px", we have this.styles['left'] with the value "20px" in the end.
 function parseCSS(that) {
     this.styles = {};
@@ -421,13 +438,17 @@ function parseCSS(that) {
         var c = '';
         for (var x = 0, l = this.stylestemp.length; x < l; x++) {
             c = this.stylestemp[x].split(':');
-            var key = $.trim(c[0]);
+            var key = typeof(c[0])=="string" ? c[0].trim() : "";
 
-            this.styles[key] = $.trim(c[1]);
+
+            this.styles[key] = typeof(c[1])=="string" ? c[1].trim() : "";
+			
         }
     }
 
 }
+
+global.parseCSS = parseCSS;
 
 // If you need to get a certain css command, call this, for example this.get("left").
 parseCSS.prototype.get = function(what) {
@@ -492,7 +513,7 @@ parseCSS.prototype.getBackgroundColor = function()
 }
 
 // This gets called when an input field gets encountered while rendering the HTML
-function renderInput(that, positionx, positiony) {
+function renderInput(that, positionx, positiony,possible_socket) {
 
     defaultvalue=that.val();
     
@@ -515,22 +536,25 @@ function renderInput(that, positionx, positiony) {
             {
                 asciiCode = value.charCodeAt(i);
             }
+            
             parsed_drawChar(ctx, asciiCode, 11, 19, positionx + i, positiony, possible_socket);
         }
     }
     
-    var inputArray = {"cursorx" : defaultvalue.length, "positionx": positionx, "positiony": positiony, "length": length, "currentvalue": defaultvalue, "defaultvalue" : defaultvalue, "cursorposx": 1};
+    console.log("defaultvalue:"+defaultvalue);
+    var inputArray = {"cursorx" : typeof(defaultvalue)!="undefined" ? defaultvalue.length : "", "positionx": positionx, "positiony": positiony, "length": length, "currentvalue": defaultvalue, "defaultvalue" : defaultvalue, "cursorposx": 1};
     inputInfo.push(inputArray);
     
 }
+
+global.renderInput = renderInput;
 
 
 // calculateContent gets called from the function switchbutton, when the user makes the canvas get shown
 function calculateContent(possible_socket) {
 
-    var cursorPosX = 0;
-    var cursorPosY = 0;
-
+    if (typeof(ctx)=="undefined") ctx=""; // check, new
+    
 
 
     // We have two iterations over the given HTML. The first one renders all input fields, the second one all tags again.
@@ -564,7 +588,15 @@ function calculateContent(possible_socket) {
                 parents.each(function() {
                     var that = $(this);
 
-                    if ((typeof (that.prop('tagName')) != "undefined") && (that.prop('tagName') != "BODY") && (that.prop('tagName') != "HTML")) {
+                    if (typeof(that.prop)!="undefined") 
+                    {
+                        var propTagName = that.prop('tagName');                            
+                    } else {   
+                        var propTagName = that[0].name.toString().toUpperCase();
+                    }
+                    console.log("PROPTAGNAME:"+propTagName);
+                    
+                    if ( (propTagName != "BODY") && (propTagName != "HTML") ) {
 
                         var cssItems = new parseCSS($(this));
                         // This gets the "left" or the "top" value inside the style tag of an element
@@ -601,7 +633,16 @@ function calculateContent(possible_socket) {
 
             }
 
-            if ((originalDIV.prop('tagName')) != "INPUT") {
+            if (typeof(originalDIV.prop)!="undefined") 
+                    {
+                       var propTagName = originalDIV.prop('tagName');                            
+                    } else {   
+                       var propTagName = originalDIV[0].name.toString().toUpperCase();
+                    }
+                    console.log("PROPTAGNAME:"+propTagName);
+
+            if (propTagName != "INPUT")
+            {
             var cssItems = new parseCSS(originalDIV);
 		// Get the "color" and "backlground-color" field from the style tag (if there is any).
             var rgb_color = cssItems.getColor();
@@ -610,35 +651,36 @@ function calculateContent(possible_socket) {
 
            
             // Special checking if the original element is an input element. Here, nothing gets printed.
-            if ( ((originalDIV.prop('tagName')) == "INPUT") && (originalDIV.attr('type').toString().toUpperCase()=="BUTTON") ) {
+            if ( (propTagName == "INPUT") && (originalDIV.attr('type').toString().toUpperCase()=="BUTTON") ) {
                 var text="Submit";
                 if (typeof(originalDIV.attr('value'))!="undefined") {
                     text=originalDIV.attr('value');
                 }
                 var fgcolor = new Array(255,255,255);
                 var bgcolor = new Array(99,99,99);
-                printthat(" "+text+" ", positionx, positiony, fgcolor, bgcolor); // Show that text on the canvas
+                printthat(" "+text+" ", positionx, positiony, fgcolor, bgcolor,possible_socket); // Show that text on the canvas
                 var button = { "positionx": positionx, "positiony" : positiony, "text" : text, "bgcolor" : bgcolor, "fgcolor" : fgcolor, "onclick" : originalDIV.attr('onclick') };
                 buttonInfo.push(button);
                 
             } else
-            if ((originalDIV.prop('tagName')) == "INPUT") {
+            if ((propTagName) == "INPUT") {
                 // cursorPosX and cursorPosY are set to 0 by default. By checking this, we find out if we have it to do with the very first input element on the page. We need this to set the cursor position.
-                if ((cursorPosX == 0) && (cursorPosY == 0)) {
+                if ((parsed_getCursorPosX() == 0) && (parsed_getCursorPosY() == 0)) {
                     // The x position gets stored
-                    cursorPosX = positionx;
+                    var newPosX = positionx;
                     // The position of the input field changes when we have text standing before it. This is like gettting text(), which does not take any other tags into account - just pure text. 
+                    
                     if (originalDIV.parent().text().length > 0) {
-                        cursorPosX = cursorPosX + originalDIV.parent().text().length;
+                        newPosX = newPosX + originalDIV.parent().text().length;
                     }
                     if (originalDIV.val().length>0) {
-                        cursorPosX = cursorPosX + originalDIV.val().length;
+                        newPosX = newPosX + originalDIV.val().length;
                     }
                     parsed_showCharacter(true, possible_socket);
                     // Als, the y position gets stored
-                    cursorPosY = positiony;
-                    parsed_setCursorPosX(cursorPosX, possible_socket);
-                    parsed_setCursorPosY(cursorPosY, possible_socket);
+                    var newPosY = positiony;
+                    parsed_setCursorPosX(newPosX, possible_socket);
+                    parsed_setCursorPosY(newPosY, possible_socket);
                     // Now that we have the first input element, we set the position of the blinking cursor where the first input field is located.
                     parsed_redrawCursor(possible_socket);
                 }
@@ -646,19 +688,19 @@ function calculateContent(possible_socket) {
                 
                 currentInput=1;
                 
-                renderInput(originalDIV, positionx, positiony);
+                renderInput(originalDIV, positionx, positiony, possible_socket);
                 // 
                 originalDIV.remove();
             } else
             // If this is not an input element.
             if (hasChildren) { // Special check for hasChildren. See else statement for further information.
                 var text = originalDIV.clone().children().remove().end().text(); // Remove all other tags, so we have it to do with pure text
-                printthat(text, positionx, positiony,rgb_color,rgb_backgroundcolor); // Show that text on the canvas
+                printthat(text, positionx, positiony,rgb_color,rgb_backgroundcolor,possible_socket); // Show that text on the canvas
             } else {
                 // We set hasChildren when we have found any children elements. Otherwise this is just plain text we find inside the editable textarea. This is special handling,
                 // because, since there are no child divs or spans, we would not output anything otherwise.
                 var text = originalDIV.html();
-                printthat(text, positionx, positiony,rgb_color,rgb_backgroundcolor);
+                printthat(text, positionx, positiony,rgb_color,rgb_backgroundcolor,possible_socket);
             }
 
 
@@ -668,6 +710,9 @@ function calculateContent(possible_socket) {
 
 
 }
+
+global.calculateContent = calculateContent;
+
 
 function checkSelectionOnParsed(x, y, possible_socket) {
   
@@ -729,8 +774,7 @@ function checkSelectionOnParsed(x, y, possible_socket) {
     
 }
 
-
-
+global.checkSelectionOnParsed = checkSelectionOnParsed;
 
 function setFocusOnInputField(possible_socket) {
  
@@ -742,3 +786,7 @@ function setFocusOnInputField(possible_socket) {
     
     
 }
+
+global.setFocusOnInputField = setFocusOnInputField;
+
+ }(this));
