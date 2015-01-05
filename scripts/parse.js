@@ -155,7 +155,7 @@ function handleParsedKeyCode(keyCode,e,possible_socket) {
                             return true;
                               break;
                           case 8: // backspace
-                              parsed_showCharacter(possible_socket);
+                              parsed_showCharacter(true, possible_socket);
                               var myinput = inputInfo[currentInput-1];                              
                               
                               if (myinput.cursorx>0) 
@@ -204,7 +204,7 @@ function handleParsedKeyCode(keyCode,e,possible_socket) {
                                         if (myinput.cursorx<=myinput.currentvalue.length-1) {
                                             
                                                 parsed_setCursorPosX(cursorPosX+1, possible_socket);
-                                                parsed_showCharacter(possible_socket);
+                                                parsed_showCharacter(true, possible_socket);
                                                 parsed_redrawCursor(possible_socket);
                                                 myinput.cursorx++;
                                                 inputInfo[currentInput]=myinput;
@@ -254,7 +254,7 @@ function handleParsedKeyCode(keyCode,e,possible_socket) {
                                         
                                         if (myinput.cursorx>0) {
                                                 parsed_setCursorPosX(cursorPosX-1, possible_socket);
-                                                parsed_showCharacter(possible_socket);
+                                                parsed_showCharacter(true, possible_socket);
                                                 parsed_redrawCursor(possible_socket);
                                                 myinput.cursorx--;
                                                 inputInfo[currentInput]=myinput;
@@ -310,7 +310,7 @@ function executeParsedKey(keyCode, character, possible_socket) {
                                   
                                     parsed_drawChar(ctx, keyCode, 11, 19, cursorPosX, cursorPosY, possible_socket);
                                     if (cursorPosX<getDisplayWidth()-2) { parsed_setCursorPosX(cursorPosX+1, possible_socket); }
-                                    parsed_showCharacter(possible_socket);
+                                    parsed_showCharacter(true, possible_socket);
                                     parsed_redrawCursor(possible_socket);
                                 } else {                                    
                                    // TODO
@@ -325,7 +325,7 @@ function executeParsedKey(keyCode, character, possible_socket) {
                                    
                                    if (myinput.cursorx<myinput.length-1) {
                                         parsed_setCursorPosX(cursorPosX+1, possible_socket);
-                                        parsed_showCharacter(possible_socket);
+                                        parsed_showCharacter(true, possible_socket);
                                         parsed_redrawCursor(possible_socket);
                                         myinput.cursorx++;
                                    }
@@ -402,6 +402,7 @@ function switchbutton() {
         $('#switchbutton').val('Show HTML');
         $('#ansi').show();
         $('#ascii_html').hide();
+		$('#ascii_content').html("<div>" + $('#ascii_textarea').val() + "</div>");
         calculateContent();
     } else {
         $('#switchbutton').val('Show Ascii');
@@ -530,7 +531,7 @@ function calculateContent(possible_socket) {
     var cursorPosX = 0;
     var cursorPosY = 0;
 
-    $('#ascii_content').html("<div>" + $('#ascii_textarea').val() + "</div>");
+
 
     // We have two iterations over the given HTML. The first one renders all input fields, the second one all tags again.
 
@@ -633,7 +634,7 @@ function calculateContent(possible_socket) {
                     if (originalDIV.val().length>0) {
                         cursorPosX = cursorPosX + originalDIV.val().length;
                     }
-                    parsed_showCharacter(possible_socket);
+                    parsed_showCharacter(true, possible_socket);
                     // Als, the y position gets stored
                     cursorPosY = positiony;
                     parsed_setCursorPosX(cursorPosX, possible_socket);
@@ -685,14 +686,14 @@ function checkSelectionOnParsed(x, y, possible_socket) {
                 } else {
                     inputInfo[i].cursorx=newvalue;
                 }
-                parsed_showCharacter(possible_socket);
+                parsed_showCharacter(true, possible_socket);
                 parsed_setCursorPosX(inputInfo[i].positionx+inputInfo[i].cursorx, possible_socket);
                 parsed_redrawCursor(possible_socket);
             } else {
                 
               // Changing selection 
             currentInput=i+1;
-            parsed_showCharacter(possible_socket);
+            parsed_showCharacter(true, possible_socket);
             
             var newvalue=x-inputInfo[i].positionx;
                 
