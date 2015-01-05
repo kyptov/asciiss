@@ -197,7 +197,31 @@
         }
     }
     
+    /** JS FUNCTIONS CALLED IN PARSE.JS **/
     
+function parsed_drawChar(ctx, char, fg, bg, x, y) {
+    codepage.drawChar(ctx, char, fg, bg, x, y);
+}
+
+function parsed_showCharacter(bool) {
+    showCharacter(bool);
+}
+
+function parsed_redrawCursor() {
+    redrawCursor();
+}
+
+function parsed_setCursorPosX(x) {
+    setCursorPosX(x);
+}
+function parsed_setCursorPosY(y) {
+    setCursorPosY(y);
+}
+
+function submit() {
+    alert("SUBMIT");
+}
+
 </script>
 <body style="width:100%;height:100%;">
     <title>Ascii Stylesheet</title>
