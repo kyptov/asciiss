@@ -1,3 +1,5 @@
+var buttonInfo = new Array();
+
 var inputInfo = new Array();
 var currentInput = 0;
 
@@ -185,6 +187,7 @@ function handleParsedKeyCode(keyCode,e) {
                             return true;
                               break;
                           case 8: // backspace
+                              showCharacter();
                               var myinput = inputInfo[currentInput-1];                              
                               
                               if (myinput.cursorx>0) 
@@ -643,7 +646,11 @@ function calculateContent() {
                 if (typeof(originalDIV.attr('value'))!="undefined") {
                     text=originalDIV.attr('value');
                 }
-                printthat(" "+text+" ", positionx, positiony, new Array(255,255,255), new Array(99,99,99)); // Show that text on the canvas
+                var fgcolor = new Array(255,255,255);
+                var bgcolor = new Array(99,99,99);
+                printthat(" "+text+" ", positionx, positiony, fgcolor, bgcolor); // Show that text on the canvas
+                var button = { "positionx": positionx, "positiony" : positiony, "text" : text, "bgcolor" : bgcolor, "fgcolor" : fgcolor, "onclick" : originalDIV.attr('onclick') };
+                buttonInfo.push(button);
                 
             } else
             if ((originalDIV.prop('tagName')) == "INPUT") {
@@ -688,21 +695,76 @@ function calculateContent() {
 
         });
 
-function checkSelectionOnParsed() {
-    
-    for (var i = 0; i < inputs.length; i++) {
+
+
+
+}
+
+function checkSelectionOnParsed(x, y) {
+  
+    for (var i = 0; i < inputInfo.length; i++) {      
      
-        setCursorPosX(myCursorPosX);
-        setCursorPosY(myCursorPosY);
+      if (inputInfo[i].positiony==y ) {
+        var maxx = inputInfo[i].positionx+inputInfo[i].length;
+       
+        if ( (x>inputInfo[i].positionx) && (x<maxx) ) {
+            if (currentInput==i+1) 
+            {
+                var newvalue=x-inputInfo[i].positionx;
+                
+                if (newvalue>inputInfo[i].currentvalue.length) {
+                    inputInfo[i].cursorx=inputInfo[i].currentvalue.length;
+                } else {
+                    inputInfo[i].cursorx=newvalue;
+                }
+                showCharacter();
+                setCursorPosX(inputInfo[i].positionx+inputInfo[i].cursorx);
+                redrawCursor();
+            } else {
+                
+              // Changing selection 
+            currentInput=i+1;
+            showCharacter();
+            
+            var newvalue=x-inputInfo[i].positionx;
+                
+                if (newvalue>inputInfo[i].currentvalue.length) {
+                    inputInfo[i].cursorx=inputInfo[i].currentvalue.length;
+                } else {
+                    inputInfo[i].cursorx=newvalue;
+                }
+                setCursorPosX(inputInfo[i].positionx+inputInfo[i].cursorx);
+                setCursorPosY(y);            
+                redrawCursor();
+                return;
+            }
+        }    
+    }
+    }
     
+    for (var i = 0; i < buttonInfo.length; i++) {      
+     
+      if (buttonInfo[i].positiony==y ) 
+      {
+        var maxx = buttonInfo[i].positionx+buttonInfo[i].text.length;
+       
+        if ( (x>buttonInfo[i].positionx) && (x<maxx) ) 
+        {
+            var onclick =  buttonInfo[i].onclick;
+            eval(onclick);
+        }
+    
+    }
     }
                     
     
 }
 
-
-
+function submit() {
+    alert("SUBMIT");
 }
+
+
 
 function setFocusOnInputField() {
  
