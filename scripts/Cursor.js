@@ -1,3 +1,4 @@
+(function(global) {
 /**
 * 
 * https://github.com/TooTallNate/ansi.js
@@ -103,15 +104,14 @@ function Cursor () {
  
 }
 
-
-exports.Cursor = Cursor;
+global.Cursor = Cursor;
 
 function Colorer (cursor, base) {
   this.current = null
   this.cursor = cursor
   this.base = base
 }
-exports.Colorer = Colorer;
+global.Colorer = Colorer;
 
 /**
 * Write an ANSI color code, ensuring that the same code doesn't get rewritten.
@@ -124,7 +124,6 @@ Colorer.prototype._setColorCode = function setColorCode (code) {
   this.current = c
   return this
 }
-
 
 /**
 * Set up the positional ANSI codes.
@@ -266,9 +265,12 @@ Cursor.prototype.reset = function () {
 */
 
 Colorer.prototype.rgb = function (r, g, b) {
+	
+
   var base = this.base + 38
     , code = rgb(r, g, b)
   this._setColorCode(base + ';5;' + code)
+	  
   return this.cursor;
 }
 
@@ -308,7 +310,8 @@ Cursor.prototype.hex = function (color) {
 function rgb (r, g, b) {
   var red = r / 255 * 5
     , green = g / 255 * 5
-    , blue = b / 255 * 5
+    , blue = b / 255 * 5;
+
   return rgb5(red, green, blue);
 }
 
@@ -349,4 +352,6 @@ function toArray (a) {
     rtn.push(a[i])
   }
   return rtn
-}
+} 
+  
+}(this));

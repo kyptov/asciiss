@@ -4,8 +4,10 @@
 <script src="node_modules/asciirocks/scripts/jquery-ui-1.10.4.custom.min.js"></script>
 <script src="node_modules/asciirocks/scripts/app.js"></script>
 <script src="node_modules/asciirocks/scripts/interpreter.js"></script>
+<script src="node_modules/asciirocks/scripts/requestanimframe.js"></script>
 <script src="scripts/x256.js"></script>
 <script src="scripts/parse.js"></script>
+<script src="scripts/Cursor.js"></script>
 <link rel="stylesheet" href="node_modules/asciirocks/css/panel.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="node_modules/asciirocks/css/style.css" type="text/css" media="screen" />
 <style>
@@ -22,6 +24,7 @@
 <script>
     var doubleClickStarted = false;
     var doubleClickInterval;
+	cursor = new Cursor();
    
    /** This registers a key event listener, so entering something in the browser has functionality **/
    function registerParsedKeyEventListener() {
@@ -77,6 +80,8 @@
 
     window.onload = function() {
         
+		
+
         registerParsedKeyEventListener();
         
 		// At the start, if there already is some HTML, the user gets asked if he wants to keep the original HTML
@@ -103,14 +108,17 @@
 
             globalContext = document.getElementById("ansi").getContext("2d");
 
-            charactersatonce = 999999; //Math.floor((baud || 115200) / 8 / 100);
             doClearScreen(false);
             switchbutton(); // Shows the canvas right from the start and hides the HTML
+
+			globalDisplay = new Display();
         });
+		
         
 		// This gets called whenever the user clicks on the Canvas
           document.getElementById('ansi').addEventListener('mousedown', function(e) {
                    
+				   
                     if (doubleClickStarted)
                     {
                         doubleClickStarted=false;
@@ -146,38 +154,46 @@
     
 
 	// Gets called from calculateContent and shows the parameter text at the given x and y position on the canvas
-    function printthat(text, positionx, positiony,rgb_color,rgb_backgroundcolor) {
+    function printthat(text, x, y, fg_rgb,bg_rgb) {
 
-        //alert(rgb_color[0]+"/"+rgb_color[1]+"/"+rgb_color[2]);
-
-		// Then iterate over the given text.
-        for (var i = 0; i < text.length; i++) {
-            var asciiCode = text.charCodeAt(i);
-            if (asciiCode >= 32)
-            {
-               
-                var fgColor = x256(rgb_color[0], rgb_color[1], rgb_color[2]);
-                var bgColor = x256(rgb_backgroundcolor[0], rgb_backgroundcolor[1], rgb_backgroundcolor[2]);
-				// Draw on canvas
-                                
-                codepage.drawChar(ctx, asciiCode, fgColor, bgColor, positionx + i, positiony);
-            }
-        }
-
+       var mygoto = cursor.goto(x,y);
+						
+						var fg = cursor.rgb(fg_rgb[0], fg_rgb[1], fg_rgb[2]).foreground.current;
+						var bg = "48"+cursor.rgb(bg_rgb[0], bg_rgb[1], bg_rgb[2]).foreground.current.substring(2);
+						fg = String.fromCharCode(27)+"["+fg+"m";
+						bg = String.fromCharCode(27)+"["+bg+"m";
+						
+    
+		parseANSI(mygoto+fg+bg+text);
 
     }
 
+	function parseANSI(text) {
+		
+		var data = [];
+		for (var i = 0; i < text.length; i++) {
+	            var asciiCode = text.charCodeAt(i);
+				
+                data.push(asciiCode);
+        }
+             
+        var myBuffer = new Uint8Array(data);                            
+
+		
+		var tmp = new Uint8Array(globalBuffer.byteLength + myBuffer.byteLength);
+                        tmp.set(new Uint8Array(globalBuffer), 0);
+                        tmp.set(new Uint8Array(myBuffer), globalBuffer.byteLength);
+                        globalBuffer=tmp;
+
+	}
+
 	// This is just a test function if the ascii table works and gets properly shown
     function testAsciiTable() {
-
         $('#switchbutton').val('Show HTML');
         $('#ansi').show();
         $('#ascii_html').hide();
         drawAsciiTable();
     }
-
-
-
 
 	// gets called from testAsciiTable and the only purpose is testing the ascii table.
     function drawAsciiTable() {
@@ -199,8 +215,18 @@
     
     /** JS FUNCTIONS CALLED IN PARSE.JS **/
     
-function parsed_drawChar(ctx, char, fg, bg, x, y) {
-    codepage.drawChar(ctx, char, fg, bg, x, y);
+function parsed_drawChar(ctx, charcode, fg_rgb, bg_rgb, x, y) {
+						
+						var mygoto = cursor.goto(x,y);
+						
+						var fg = cursor.rgb(fg_rgb[0], fg_rgb[1], fg_rgb[2]).foreground.current;
+						var bg = "48"+cursor.rgb(bg_rgb[0], bg_rgb[1], bg_rgb[2]).foreground.current.substring(2);
+						fg = String.fromCharCode(27)+"["+fg+"m";
+						bg = String.fromCharCode(27)+"["+bg+"m";
+						var mychar = String.fromCharCode(charcode);
+						
+						parseANSI(mygoto+fg+bg+mychar);
+
 }
 
 function parsed_showCharacter(bool) {
@@ -208,14 +234,26 @@ function parsed_showCharacter(bool) {
 }
 
 function parsed_redrawCursor() {
-    redrawCursor();
+	
+    redrawCursor(true);
 }
 
 function parsed_setCursorPosX(x) {
-    setCursorPosX(x);
+if (typeof(globalDisplay)!="undefined") {
+	var mygoto = cursor.goto(x,globalDisplay.getPosY());
+	
+	parseANSI(mygoto);
+}
+setCursorPosX(x);
+
 }
 function parsed_setCursorPosY(y) {
-    setCursorPosY(y);
+	if (typeof(globalDisplay)!="undefined") {
+		var mygoto = cursor.goto(globalDisplay.getPosX(),y);
+		alert(mygoto);
+    	parseANSI(mygoto);
+	}
+	setCursorPosY(y);
 }
 function parsed_getCursorPosX(x) {
     return cursorPosX;

@@ -31,7 +31,7 @@ function handleParsedKeyCode(keyCode,e,possible_socket) {
                 
                       return true;
                       break;
-                         case 231: executeKey(135, mychar, possible_socket); // ca
+                         case 231: executeParsedKey(135, mychar, possible_socket); // ca
                              
                 
                       return true;
@@ -154,10 +154,12 @@ function handleParsedKeyCode(keyCode,e,possible_socket) {
                               {
                                   myinput.currentvalue=myinput.currentvalue.substring(0, myinput.cursorx-1)+myinput.currentvalue.substring(myinput.cursorx);
                               
+							  var fgColor=new Array(255, 255, 0);
+							  var bgColor=new Array(0, 0, 255);
                               for (var i = myinput.cursorx-1; i < myinput.currentvalue.length; i++) {                                      
-                                       parsed_drawChar(ctx, myinput.currentvalue.charCodeAt(i), 11, 19, myinput.positionx+i, parsed_getCursorPosY(), possible_socket);
+                                       parsed_drawChar(ctx, myinput.currentvalue.charCodeAt(i), fgColor, bgColor, myinput.positionx+i, parsed_getCursorPosY(), possible_socket);
                               }
-                              parsed_drawChar(ctx, 32, 11, 19, myinput.currentvalue.length+myinput.positionx, parsed_getCursorPosY(), possible_socket);
+                              parsed_drawChar(ctx, 32, fgColor, bgColor, myinput.currentvalue.length+myinput.positionx, parsed_getCursorPosY(), possible_socket);
                                     myinput.cursorx--;
                                     parsed_setCursorPosX(parsed_getCursorPosX()-1, possible_socket);
                                     
@@ -196,7 +198,7 @@ global.handleParsedKeyCode = handleParsedKeyCode;
                                        
                                        var myinput = inputInfo[currentInput-1];
                                         if (myinput.cursorx<=myinput.currentvalue.length-1) {
-                                            
+                                                console.log("Setting cursor position to "+parsed_getCursorPosX()+1);
                                                 parsed_setCursorPosX(parsed_getCursorPosX()+1, possible_socket);
                                                 parsed_showCharacter(true, possible_socket);
                                                 parsed_redrawCursor(possible_socket);
@@ -301,10 +303,14 @@ global.handleParsedKeyCode2 = handleParsedKeyCode2;
 
 function executeParsedKey(keyCode, character,  possible_socket) {
         parsed_showCharacter(false, possible_socket); 
+		var fgColor=new Array(255, 255, 0);
+		var bgColor=new Array(0, 0, 255);
         if (parserInsert==false) {
                                     var myascii = screenCharacterArray[parsed_getCursorPosY()][parsed_getCursorPosX()][0] ;
-                                  
-                                    parsed_drawChar(ctx, keyCode, 11, 19, parsed_getCursorPosX(), parsed_getCursorPosY(), possible_socket);
+                         
+                                    
+                                    parsed_drawChar(ctx, keyCode, fgColor, bgColor, parsed_getCursorPosX(), parsed_getCursorPosY(), possible_socket);
+                                    
                                     if (parsed_getCursorPosX()<getDisplayWidth()-2) { parsed_setCursorPosX(parsed_getCursorPosX()+1, possible_socket); }
                                     parsed_showCharacter(true, possible_socket);
                                     parsed_redrawCursor(possible_socket);
@@ -312,19 +318,21 @@ function executeParsedKey(keyCode, character,  possible_socket) {
                                    // TODO
                                    
                                    var myinput = inputInfo[currentInput-1];                                   
-                                   parsed_drawChar(ctx, keyCode, 11, 19, parsed_getCursorPosX(), parsed_getCursorPosY(), possible_socket);
-                                   console.log("inputInfo.length:"+inputInfo.length);
-                                   console.log("currentInput:"+currentInput);
+                                   
+                                   parsed_drawChar(ctx, keyCode, fgColor, bgColor, parsed_getCursorPosX(), parsed_getCursorPosY(), possible_socket);
                                    while (myinput.currentvalue.length<myinput.cursorx)
                                    {
                                        myinput.currentvalue+=" ";
                                    }
                                    myinput.currentvalue = myinput.currentvalue.substring(0, myinput.cursorx)+character+myinput.currentvalue.substring(myinput.cursorx);
                                    
+                                   var increaseCursor=false;
+                                   var newPos = parsed_getCursorPosX();
                                    if (myinput.cursorx<myinput.length-1) {
-                                        parsed_setCursorPosX(parsed_getCursorPosX()+1, possible_socket);
-                                        parsed_showCharacter(true, possible_socket);
-                                        parsed_redrawCursor(possible_socket);
+                                       increaseCursor=true;
+                                       
+                                        
+                                       
                                         myinput.cursorx++;
                                    }
                                    if (myinput.currentvalue.length>myinput.length) {
@@ -334,7 +342,16 @@ function executeParsedKey(keyCode, character,  possible_socket) {
                                    
                                    for (var i = myinput.cursorx; i < myinput.currentvalue.length; i++) {
                                       
-                                       parsed_drawChar(ctx, myinput.currentvalue.charCodeAt(i), 11, 19, myinput.positionx+i, parsed_getCursorPosY(), possible_socket);
+                                       
+                                       parsed_drawChar(ctx, myinput.currentvalue.charCodeAt(i), fgColor, bgColor, myinput.positionx+i, parsed_getCursorPosY(), possible_socket);
+                                   }
+                                   if (increaseCursor) {
+                                        parsed_showCharacter(true, possible_socket);
+                                        
+                                        
+                                        parsed_setCursorPosX(parsed_getCursorPosX()+1, possible_socket);
+                                        parsed_redrawCursor(possible_socket);
+                                       
                                    }
                                   
                                    
@@ -530,6 +547,8 @@ function renderInput(that, positionx, positiony,possible_socket) {
         value = "";
     if (type == "text") {
 
+		var fgColor=new Array(255, 255, 0);
+		var bgColor=new Array(0, 0, 255);
         for (var i = 0; i < length; i++) {
             var asciiCode = 32;
             if (i < value.length)
@@ -537,11 +556,11 @@ function renderInput(that, positionx, positiony,possible_socket) {
                 asciiCode = value.charCodeAt(i);
             }
             
-            parsed_drawChar(ctx, asciiCode, 11, 19, positionx + i, positiony, possible_socket);
+            parsed_drawChar(ctx, asciiCode, fgColor, bgColor, positionx + i, positiony, possible_socket);
         }
     }
     
-    console.log("defaultvalue:"+defaultvalue);
+    
     var inputArray = {"cursorx" : typeof(defaultvalue)!="undefined" ? defaultvalue.length : "", "positionx": positionx, "positiony": positiony, "length": length, "currentvalue": defaultvalue, "defaultvalue" : defaultvalue, "cursorposx": 1};
     inputInfo.push(inputArray);
     
@@ -594,7 +613,7 @@ function calculateContent(possible_socket) {
                     } else {   
                         var propTagName = that[0].name.toString().toUpperCase();
                     }
-                    console.log("PROPTAGNAME:"+propTagName);
+                    
                     
                     if ( (propTagName != "BODY") && (propTagName != "HTML") ) {
 
@@ -639,7 +658,7 @@ function calculateContent(possible_socket) {
                     } else {   
                        var propTagName = originalDIV[0].name.toString().toUpperCase();
                     }
-                    console.log("PROPTAGNAME:"+propTagName);
+                    
 
             if (propTagName != "INPUT")
             {
@@ -658,6 +677,7 @@ function calculateContent(possible_socket) {
                 }
                 var fgcolor = new Array(255,255,255);
                 var bgcolor = new Array(99,99,99);
+				
                 printthat(" "+text+" ", positionx, positiony, fgcolor, bgcolor,possible_socket); // Show that text on the canvas
                 var button = { "positionx": positionx, "positiony" : positiony, "text" : text, "bgcolor" : bgcolor, "fgcolor" : fgcolor, "onclick" : originalDIV.attr('onclick') };
                 buttonInfo.push(button);
@@ -694,12 +714,15 @@ function calculateContent(possible_socket) {
             } else
             // If this is not an input element.
             if (hasChildren) { // Special check for hasChildren. See else statement for further information.
-                var text = originalDIV.clone().children().remove().end().text(); // Remove all other tags, so we have it to do with pure text
+				
+                var text = originalDIV.clone().children().remove().end().text().trim(); // Retrieve text not nested in child tags
+				
                 printthat(text, positionx, positiony,rgb_color,rgb_backgroundcolor,possible_socket); // Show that text on the canvas
             } else {
                 // We set hasChildren when we have found any children elements. Otherwise this is just plain text we find inside the editable textarea. This is special handling,
                 // because, since there are no child divs or spans, we would not output anything otherwise.
                 var text = originalDIV.html();
+				
                 printthat(text, positionx, positiony,rgb_color,rgb_backgroundcolor,possible_socket);
             }
 
@@ -721,6 +744,7 @@ function checkSelectionOnParsed(x, y, possible_socket) {
       if (inputInfo[i].positiony==y ) {
         var maxx = inputInfo[i].positionx+inputInfo[i].length;
        
+	 
         if ( (x>inputInfo[i].positionx) && (x<maxx) ) {
             if (currentInput==i+1) 
             {
@@ -732,6 +756,7 @@ function checkSelectionOnParsed(x, y, possible_socket) {
                     inputInfo[i].cursorx=newvalue;
                 }
                 parsed_showCharacter(true, possible_socket);
+				
                 parsed_setCursorPosX(inputInfo[i].positionx+inputInfo[i].cursorx, possible_socket);
                 parsed_redrawCursor(possible_socket);
             } else {
