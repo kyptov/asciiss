@@ -533,6 +533,7 @@ parseCSS.prototype.getBackgroundColor = function()
 function renderInput(that, positionx, positiony,possible_socket) {
 
     defaultvalue=that.val();
+	if (typeof(defaultvalue)=="undefined") defaultvalue="";
     
 
     positionx = positionx + that.parent().text().length;
