@@ -250,8 +250,7 @@ setCursorPosX(x);
 function parsed_setCursorPosY(y) {
 	if (typeof(globalDisplay)!="undefined") {
 		var mygoto = cursor.goto(globalDisplay.getPosX(),y);
-		alert(mygoto);
-    	parseANSI(mygoto);
+		parseANSI(mygoto);
 	}
 	setCursorPosY(y);
 }
