@@ -1,7 +1,6 @@
 (function(global) {
 	
 var buttonInfo = new Array();
-
 var inputInfo = new Array();
 var currentInput = 0;
 var parserInsert = true;
@@ -191,17 +190,16 @@ global.handleParsedKeyCode = handleParsedKeyCode;
                 switch(keyCode){
                     
                     case 39 : // cursor right
-                    console.log("39 copyMode:"+copyMode);
-                         parsed_showCharacter(false, possible_socket);
+                    
+                         
                          if (!e.shiftKey) { 
                                    if (!e.ctrlKey) {
-                                       
+                                       console.log("GOING RIGHT");
                                        var myinput = inputInfo[currentInput-1];
                                         if (myinput.cursorx<=myinput.currentvalue.length-1) {
                                                 console.log("Setting cursor position to "+parsed_getCursorPosX()+1);
                                                 parsed_setCursorPosX(parsed_getCursorPosX()+1, possible_socket);
-                                                parsed_showCharacter(true, possible_socket);
-                                                parsed_redrawCursor(possible_socket);
+                                              
                                                 myinput.cursorx++;
                                                 inputInfo[currentInput]=myinput;
                                         }
@@ -217,10 +215,10 @@ global.handleParsedKeyCode = handleParsedKeyCode;
                               return true;
                               break;
                           case 40 : // cursor down
-                              parsed_showCharacter(false, possible_socket);
+                              
                               if (!e.shiftKey) {
                                   if (!e.ctrlKey) {
-                                        
+                                        console.log("GOING DOWN");
                                         /*
                                         if (cursorPosY<getDisplayHeight()-1) {
                                          cursorPosY++;
@@ -242,16 +240,15 @@ global.handleParsedKeyCode = handleParsedKeyCode;
                               return true;
                               break;
                           case 37: // cursor left, %
-                               parsed_showCharacter(false, possible_socket);
+                               
                               if (!e.shiftKey) {
                                    if (!e.ctrlKey) {
                                       
                                         var myinput = inputInfo[currentInput-1];
                                         
                                         if (myinput.cursorx>0) {
+                                            console.log("GOING LEFT");
                                                 parsed_setCursorPosX(parsed_getCursorPosX()-1, possible_socket);
-                                                parsed_showCharacter(true, possible_socket);
-                                                parsed_redrawCursor(possible_socket);
                                                 myinput.cursorx--;
                                                 inputInfo[currentInput]=myinput;
                                         }
@@ -268,13 +265,13 @@ global.handleParsedKeyCode = handleParsedKeyCode;
                             return true;
                               break;
                           case 38: // cursor up
-                               parsed_showCharacter(false, possible_socket);
+                              
                                if (!e.shiftKey) {
                                    if (!e.ctrlKey) {
-                                       
+                                       console.log("GOING UP");
                                        if (currentInput>0) {
                                                 currentInput--;
-                                                setFocusOnInputField();
+                                                setFocusOnInputField(possible_socket);
                                                 
                                             }
                                        
@@ -307,15 +304,16 @@ function executeParsedKey(keyCode, character,  possible_socket) {
 		var bgColor=new Array(0, 0, 255);
         if (parserInsert==false) {
                                     var myascii = screenCharacterArray[parsed_getCursorPosY()][parsed_getCursorPosX()][0] ;
-                         
+                        
                                     
                                     parsed_drawChar(ctx, keyCode, fgColor, bgColor, parsed_getCursorPosX(), parsed_getCursorPosY(), possible_socket);
                                     
-                                    if (parsed_getCursorPosX()<getDisplayWidth()-2) { parsed_setCursorPosX(parsed_getCursorPosX()+1, possible_socket); }
+                                    if (parsed_getCursorPosX()<getDisplayWidth()-2) { parsed_setCursorPosX(parsed_getCursorPosX(), possible_socket); }
                                     parsed_showCharacter(true, possible_socket);
                                     parsed_redrawCursor(possible_socket);
                                 } else {                                    
                                    // TODO
+                                   
                                    
                                    var myinput = inputInfo[currentInput-1];                                   
                                    
@@ -324,35 +322,43 @@ function executeParsedKey(keyCode, character,  possible_socket) {
                                    {
                                        myinput.currentvalue+=" ";
                                    }
+                                   var character = String.fromCharCode(keyCode);
+                                   console.log("character:"+character);
+                                   if (myinput.cursorx<myinput.currentvalue.length) {
+                                       console.log("INSERT");
                                    myinput.currentvalue = myinput.currentvalue.substring(0, myinput.cursorx)+character+myinput.currentvalue.substring(myinput.cursorx);
+                                   } else {
+                                       console.log("ADD");
+                                   myinput.currentvalue+=character;
+                                   }
                                    
-                                   var increaseCursor=false;
-                                   var newPos = parsed_getCursorPosX();
-                                   if (myinput.cursorx<myinput.length-1) {
-                                       increaseCursor=true;
+                                   
+                                   if (myinput.currentvalue.length>=myinput.length) {
+                                   myinput.currentvalue=myinput.currentvalue.substring(0,myinput.length);
+                               }
+                                   
+                                   console.log((myinput.cursorx+1)+">"+myinput.length);
+                                   
+                                   if (myinput.cursorx+2>myinput.length) {
+                                       console.log("END");
                                        
-                                        
+                                       parsed_setCursorPosX(parsed_getCursorPosX()-1, possible_socket);
+                                   } else {
                                        
+                                       console.log("INCREASING");
+                                        console.log("myinput.currentvalue:"+myinput.currentvalue);
+                                        for (var i = myinput.cursorx; i < myinput.currentvalue.length; i++) {
+                                            parsed_drawChar(ctx, myinput.currentvalue.charCodeAt(i), fgColor, bgColor, myinput.positionx+i, parsed_getCursorPosY(), possible_socket);
+                                        }
+                                         
+                                        var newPosX = parseInt(myinput.cursorx)+parseInt(myinput.positionx)+1;
+                                        console.log("myinput.cursorx:"+myinput.cursorx+" myinput.positionx:"+myinput.positionx);
+                                        console.log("Setting cursor pos to "+newPosX);
+                                             parsed_setCursorPosX(newPosX, possible_socket);
                                         myinput.cursorx++;
-                                   }
-                                   if (myinput.currentvalue.length>myinput.length) {
-                                       myinput.currentvalue=myinput.currentvalue.substring(0,myinput.length);
-                                   }
-                                   inputInfo[currentInput-1]=myinput;
-                                   
-                                   for (var i = myinput.cursorx; i < myinput.currentvalue.length; i++) {
-                                      
-                                       
-                                       parsed_drawChar(ctx, myinput.currentvalue.charCodeAt(i), fgColor, bgColor, myinput.positionx+i, parsed_getCursorPosY(), possible_socket);
-                                   }
-                                   if (increaseCursor) {
-                                        parsed_showCharacter(true, possible_socket);
-                                        
-                                        
-                                        parsed_setCursorPosX(parsed_getCursorPosX()+1, possible_socket);
-                                        parsed_redrawCursor(possible_socket);
-                                       
-                                   }
+                                }
+                                
+                                  inputInfo[currentInput-1]=myinput;
                                   
                                    
                                 }
@@ -533,8 +539,7 @@ parseCSS.prototype.getBackgroundColor = function()
 function renderInput(that, positionx, positiony,possible_socket) {
 
     defaultvalue=that.val();
-	if (typeof(defaultvalue)=="undefined") defaultvalue="";
-    
+    if (typeof(defaultvalue)=="undefined") defaultvalue="";
 
     positionx = positionx + that.parent().text().length;
     var name = that.attr('name');
@@ -562,7 +567,8 @@ function renderInput(that, positionx, positiony,possible_socket) {
     }
     
     
-    var inputArray = {"cursorx" : typeof(defaultvalue)!="undefined" ? defaultvalue.length : "", "positionx": positionx, "positiony": positiony, "length": length, "currentvalue": defaultvalue, "defaultvalue" : defaultvalue, "cursorposx": 1};
+    var inputArray = {"cursorx" : defaultvalue.length, "positionx": positionx, "positiony": positiony, "length": length, "currentvalue": defaultvalue, "defaultvalue" : defaultvalue, "cursorposx": 1};
+    console.log("Increasing size of inputInfo");
     inputInfo.push(inputArray);
     
 }
@@ -575,7 +581,8 @@ function calculateContent(possible_socket) {
 
     if (typeof(ctx)=="undefined") ctx=""; // check, new
     
-
+    var newPosX=0;
+    var newPosY=0;
 
     // We have two iterations over the given HTML. The first one renders all input fields, the second one all tags again.
 
@@ -672,6 +679,7 @@ function calculateContent(possible_socket) {
            
             // Special checking if the original element is an input element. Here, nothing gets printed.
             if ( (propTagName == "INPUT") && (originalDIV.attr('type').toString().toUpperCase()=="BUTTON") ) {
+                console.log("X:"+positionx+" Y: "+positiony);
                 var text="Submit";
                 if (typeof(originalDIV.attr('value'))!="undefined") {
                     text=originalDIV.attr('value');
@@ -686,9 +694,9 @@ function calculateContent(possible_socket) {
             } else
             if ((propTagName) == "INPUT") {
                 // cursorPosX and cursorPosY are set to 0 by default. By checking this, we find out if we have it to do with the very first input element on the page. We need this to set the cursor position.
-                if ((parsed_getCursorPosX() == 0) && (parsed_getCursorPosY() == 0)) {
+                if ((newPosX == 0) && (newPosY == 0)) {
                     // The x position gets stored
-                    var newPosX = positionx;
+                    newPosX = positionx;
                     // The position of the input field changes when we have text standing before it. This is like gettting text(), which does not take any other tags into account - just pure text. 
                     
                     if (originalDIV.parent().text().length > 0) {
@@ -697,13 +705,10 @@ function calculateContent(possible_socket) {
                     if (originalDIV.val().length>0) {
                         newPosX = newPosX + originalDIV.val().length;
                     }
-                    parsed_showCharacter(true, possible_socket);
+                    
                     // Als, the y position gets stored
-                    var newPosY = positiony;
-                    parsed_setCursorPosX(newPosX, possible_socket);
-                    parsed_setCursorPosY(newPosY, possible_socket);
-                    // Now that we have the first input element, we set the position of the blinking cursor where the first input field is located.
-                    parsed_redrawCursor(possible_socket);
+                    newPosY = positiony;
+                    
                 }
                 // Making a function call in order to have it shown smoothly
                 
@@ -729,6 +734,14 @@ function calculateContent(possible_socket) {
 
 
         });
+        
+        console.log("newPosX:"+newPosX+" newPosY:"+newPosY);
+        if ( (newPosX!=0) && (newPosY!=0) ) {
+                    console.log("newPosX:"+newPosX+" newPosY:"+newPosY);
+                    parsed_setCursorPosX(newPosX, possible_socket);
+                    parsed_setCursorPosY(newPosY, possible_socket);
+                    // Now that we have the first input element, we set the position of the blinking cursor where the first input field is located.
+        }
 
 
 
@@ -739,13 +752,13 @@ global.calculateContent = calculateContent;
 
 
 function checkSelectionOnParsed(x, y, possible_socket) {
-  
+    
+    console.log("inputInfo.length:"+inputInfo.length);
     for (var i = 0; i < inputInfo.length; i++) {      
      
       if (inputInfo[i].positiony==y ) {
         var maxx = inputInfo[i].positionx+inputInfo[i].length;
        
-	 
         if ( (x>inputInfo[i].positionx) && (x<maxx) ) {
             if (currentInput==i+1) 
             {
@@ -756,10 +769,9 @@ function checkSelectionOnParsed(x, y, possible_socket) {
                 } else {
                     inputInfo[i].cursorx=newvalue;
                 }
-                parsed_showCharacter(true, possible_socket);
-				
+                
                 parsed_setCursorPosX(inputInfo[i].positionx+inputInfo[i].cursorx, possible_socket);
-                parsed_redrawCursor(possible_socket);
+               
             } else {
                 
               // Changing selection 
@@ -767,7 +779,7 @@ function checkSelectionOnParsed(x, y, possible_socket) {
             parsed_showCharacter(true, possible_socket);
             
             var newvalue=x-inputInfo[i].positionx;
-                
+                console.log("i:"+i+" inputInfo.length="+inputInfo.length);
                 if (newvalue>inputInfo[i].currentvalue.length) {
                     inputInfo[i].cursorx=inputInfo[i].currentvalue.length;
                 } else {
@@ -775,7 +787,7 @@ function checkSelectionOnParsed(x, y, possible_socket) {
                 }
                 parsed_setCursorPosX(inputInfo[i].positionx+inputInfo[i].cursorx, possible_socket);
                 parsed_setCursorPosY(y, possible_socket);            
-                parsed_redrawCursor(possible_socket);
+                
                 return;
             }
         }    
@@ -804,7 +816,7 @@ global.checkSelectionOnParsed = checkSelectionOnParsed;
 
 function setFocusOnInputField(possible_socket) {
  
-    // var inputInfo = {"cursorx" : defaultvalue.length, "positionx": positionx, "positiony": positiony, "length": length, "currentvalue": defaultvalue, "defaultvalue" : defaultvalue, "cursorposx": 1};
+    console.log("setFocusOnInputFIeld "+currentInput-1);
     var myinput = inputInfo[currentInput-1];
  
     parsed_setCursorPosX(myinput.positionx+myinput.cursorx, possible_socket);
@@ -814,5 +826,15 @@ function setFocusOnInputField(possible_socket) {
 }
 
 global.setFocusOnInputField = setFocusOnInputField;
+
+
+function reset() {    
+    buttonInfo = new Array();
+    inputInfo = new Array();
+    currentInput = 0;
+    parserInsert = true;    
+}
+
+global.reset=reset;
 
  }(this));
