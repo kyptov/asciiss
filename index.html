@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<script src="node_modules/asciirocks/scripts/ansi.js" type="text/javascript"></script>
+<script src="node_modules/asciirocks/scripts/codepagedisplay.js" type="text/javascript"></script>
+<script src="node_modules/asciirocks/scripts/buffer.js" type="text/javascript"></script>
+<script src="node_modules/asciirocks/scripts/scrollbar.js" type="text/javascript"></script>
 <script src="node_modules/asciirocks/scripts/jquery-1.9.1.min.js" type="text/javascript"></script>
 <script src="node_modules/asciirocks/scripts/jquery-ui-1.10.4.custom.min.js"></script>
 <script src="node_modules/asciirocks/scripts/app.js"></script>
@@ -80,7 +82,7 @@
 
     window.onload = function() {
         
-		
+		alert("ONLOAD");
 
         registerParsedKeyEventListener();
         
@@ -110,7 +112,7 @@
 
             doClearScreen(false);
             switchbutton(); // Shows the canvas right from the start and hides the HTML
-
+alert("GDISPLAY");
 			globalDisplay = new Display();
         });
 		
