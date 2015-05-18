@@ -50,7 +50,7 @@ var parsed_keypress = function(e)
                 };
                 
 var parsed_mousedown = function(e) {
-				   
+				  
                     if (doubleClickStarted)
                     {
                         doubleClickStarted=false;
@@ -72,7 +72,7 @@ var parsed_mousedown = function(e) {
                     
                     if (myCursorPosX>=getDisplayWidth()-1) { console.log(myCursorPosX+" too far"); setCursorPosX(getDisplayWidth()-1); redrawCursor(); return; }
                     if (myCursorPosY>=getDisplayHeight()-1) { console.log(myCursorPosY+" too high"); setCursorPosY(getDisplayHeight()-1); redrawCursor(); return; }
-                    
+                   
                     
                     checkSelectionOnParsed(myCursorPosX, myCursorPosY);
                     
