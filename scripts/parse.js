@@ -363,7 +363,6 @@
         var bgColor = new Array(0, 0, 255);
 
         myinput = inputinfo[currentInput - 1];
-
         if (myinput.type == "textarea")
         {          //*** before were currentRow , didnt work on showing "I am on column columnvalue". With cursorposx it works
 
@@ -481,7 +480,7 @@
                 parsed_showCharacter(true, possible_socket);
                 parsed_redrawCursor(possible_socket);
             } else {
-                // TODO
+                // STANDARD INPUT FIELD, NO TEXTAREA
 
 
                 myinput = inputinfo[currentInput - 1];
@@ -514,11 +513,8 @@
 
                 console.log((myinput.cursorposx + 1) + ">" + myinput.length);
 
-                if (myinput.cursorposx + 2 > myinput.length) {
-                    console.log("END");
-                    console.log("myinput.cursorposx: " + (myinput.cursorposx + 2) + " > " + myinput.length);
-                    console.log("NEW X (END?): " + parsed_getCursorPosX() - 1); //??
-                    parsed_setCursorPosX(parsed_getCursorPosX() - 1, possible_socket);
+                if (myinput.cursorposx+1 >= myinput.length) {
+                    parsed_setCursorPosX(myinput.cursorposx+myinput.positionx, possible_socket);
                 } else {
 
                     console.log("INCREASING");
@@ -747,16 +743,13 @@
             }
         }
 
-
-        var inputArray = {"type": "text", "cursorposx": defaultvalue.length, "positionx": positionx, "positiony": positiony, "length": length, "currentvalue": defaultvalue, "defaultvalue": defaultvalue, "cursorposx": 1};
-        console.log("Increasing size of inputinfo");
-        //alert("INPUT");
+        var inputArray = {"name" : that.attr('name'), "type": "text", "cursorposx": defaultvalue.length, "positionx": positionx, "positiony": positiony, "length": length, "currentvalue": defaultvalue, "defaultvalue": defaultvalue};
         inputinfo.push(inputArray);
 
     }
 
     global.renderInput = renderInput;
-
+a
 // This gets called when an input field gets encountered while rendering the HTML
     function renderTextarea(that, positionx, positiony, possible_socket) {
 
@@ -785,7 +778,7 @@
         }
 
         var inputArray = {"type": "textarea", "rows" : propAttrRows, "cols" : propAttrCols, "positionx": positionx, "positiony": positiony, "length": propAttrCols, "currentvalue": yarray, "defaultvalue": yarray, "cursorposx": defaultvalue.length, "cursorposy" : 0};
-        //alert("TEXTAREA");
+     
         inputinfo.push(inputArray);
 
     }
