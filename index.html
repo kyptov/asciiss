@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<head>
+    <title>Ascii Stylesheet</title>
 <script src="node_modules/asciirocks/scripts/codepagedisplay.js" type="text/javascript"></script>
 <script src="node_modules/asciirocks/scripts/buffer.js" type="text/javascript"></script>
 <script src="node_modules/asciirocks/scripts/scrollbar.js" type="text/javascript"></script>
@@ -9,6 +11,7 @@
 <script src="node_modules/asciirocks/scripts/requestanimframe.js"></script>
 <script src="scripts/x256.js"></script>
 <script src="scripts/parse.js"></script>
+<script src="scripts/parse_events.js"></script>
 <script src="scripts/Cursor.js"></script>
 <link rel="stylesheet" href="node_modules/asciirocks/css/panel.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="node_modules/asciirocks/css/style.css" type="text/css" media="screen" />
@@ -28,51 +31,6 @@
     var doubleClickInterval;
     var cursor = new Cursor();
    
-   /** This registers a key event listener, so entering something in the browser has functionality **/
-   function registerParsedKeyEventListener() {
-		
-                document.body.addEventListener('keypress',
-                function(e)
-                {
-                
-                    var keyCode = e.which;
-                   
-                    if (keyCode!=0) {
-                        e.preventDefault(); 
-                        
-                        handleParsedKeyCode(keyCode,e);
-                    }
-                
-                },
-                false);
-                
-                document.body.addEventListener('keydown',
-                function(e)
-                {
-                 
-                    var keyCode = e.which;
-                  
-					if (keyCode == 17) {
-                        ctrlKey=true;
-                    } else
-                    if (keyCode==27) {
-                         if ($('#panel').css('display')=="block") {
-                            hidePanel(); } else {
-                            showPanel();
-                            }
-                    } else
-                    if ( (keyCode<=40) && (keyCode>=37) ) { 
-                        e.preventDefault();
-                        handleParsedKeyCode2(keyCode,e);
-                    } 
-                    
-                
-                },
-                false);
-                
-               
-                
-    }
    
    
    
@@ -113,37 +71,7 @@
 		
         
 		// This gets called whenever the user clicks on the Canvas
-          document.getElementById('ansi').addEventListener('mousedown', function(e) {
-                   
-				   
-                    if (doubleClickStarted)
-                    {
-                        doubleClickStarted=false;
-                        switchbutton();
-                        clearTimeout(doubleClickInterval);
-                    }
-                    doubleClickStarted = true;
-                    doubleClickInterval = setTimeout(function() { doubleClickStarted=false; }, 300);
-                   
-                    var ansicanvas = document.getElementById('ansi');
-                    var mouse = getMousePos(ansicanvas, e);
-                    var mx = mouse.x;
-                    var my = mouse.y;                    
-                    
-                    showCharacter();
-                    
-                    myCursorPosX = Math.floor(mx / canvasCharacterWidth);
-                    myCursorPosY = Math.floor(my / canvasCharacterHeight);
-                    
-                    if (myCursorPosX>=getDisplayWidth()-1) { console.log(myCursorPosX+" too far"); setCursorPosX(getDisplayWidth()-1); redrawCursor(); return; }
-                    if (myCursorPosY>=getDisplayHeight()-1) { console.log(myCursorPosY+" too high"); setCursorPosY(getDisplayHeight()-1); redrawCursor(); return; }
-                    
-                    
-                    checkSelectionOnParsed(myCursorPosX, myCursorPosY);
-                    
-                    
-                    
-                });
+          document.getElementById('ansi').addEventListener('mousedown', parsed_mousedown, false);
         
         
     };
@@ -264,23 +192,22 @@ function submit() {
 }
 
 </script>
+</head>
 <body style="width:100%;height:100%;">
-    <title>Ascii Stylesheet</title>
+    
     <div id="ascii_content" style="opacity:0" ></div> <!-- must be at the top position for coordinate getters to work -->
     <span id="ascii_html">
 	<!-- This is the textarea which is used for entering the HTML and CSS for showing the page on the canvas -->
-        The HTML:<textarea id="ascii_textarea" style="width:1024px;height:640;" rows="20" onkeyup="updateAsciiArea();">
-<span style="top:20px;left:20px;color:white;">This look and feel of this text was made by defining CSS style attributes. The HTML was parsed by javascript and the result is this.</span>
-<span style="top:22px;left:20px;color:#3caac8;">Please login!</span>
+        The HTML:<textarea id="ascii_textarea" style="width:1024px;height:640;" rows="20" onkeyup="updateAsciiArea();" />
+<span style="top:3px;left:20px;color:white;">This look and feel of this text was made by defining CSS style attributes. The HTML was parsed by javascript and the result is this.
+<span style="top:5px;left:20px;color:#3caac8;">Please login!</span>
 <form onsubmit="submit();">
 
-    <span style="top:25px;left:20px;color:white;">Username: <input type="text" name="username" value="Guest"/></span>
-    <span style="top:27px;left:20px;color:white;">Password: <input type="text" name="password" /></span>
+    <span style="top:7px;left:20px;color:white;">Username: <input type="text" name="username" value="Guest"/></span>
+    <span style="top:9px;left:20px;color:white;">Password: <input type="text" name="password" /></span>
 
-    <span style="top:30px;left:20px;">Textarea</span>
-    <span style="top:32px;left:20px;">
-	<textarea rows="10" cols="10" /></span>
-	<span style="left:45px;"><input type="button" onclick="submit();"/></span>
+   
+    <span style="top:11px;left:20px;"><input type="button" onclick="submit();"/></span>
 
 
 
@@ -288,6 +215,8 @@ function submit() {
 
         </textarea>
     </span>
+        <!--  <span style="top:30px;left:20px;">Textarea</span>
+    <span style="top:32px;left:20px;"><textarea rows="10" cols="10" /></span> -->
 
     <canvas id="ansi" width="640" height="480" style="display:none"></canvas>
 	<!-- Two buttons to change between the views -->

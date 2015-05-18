@@ -976,9 +976,9 @@
 
     function checkSelectionOnParsed(x, y, possible_socket) {
 
-        console.log("type:" + inputinfo[currentInput].type);
+       // console.log("type:" + inputinfo[currentInput].type);
 
-        console.log("inputinfo.length:" + inputinfo.length);
+        //console.log("inputinfo.length:" + inputinfo.length);
         for (var i = 0; i < inputinfo.length; i++) {
 
 
